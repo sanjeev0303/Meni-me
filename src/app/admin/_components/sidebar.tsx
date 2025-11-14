@@ -9,7 +9,7 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white/80 backdrop-blur lg:block">
+  <aside className="hidden h-screen w-64 shrink-0 border-r border-slate-200 bg-white/80 backdrop-blur lg:sticky lg:top-0 lg:block">
       <div className="flex h-16 items-center border-b border-slate-200 px-6 text-lg font-semibold uppercase tracking-[0.4em] text-slate-900">
         Hub
         <span className="text-red-600">F</span>
