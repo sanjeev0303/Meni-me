@@ -36,9 +36,10 @@ const serializeCategory = <T extends { imageUrl: string | null; imageFileId: str
       : null,
 });
 
-export async function PATCH(request: Request, context: { params: unknown }) {
+export async function PATCH(request: Request, context: { params: Promise<unknown> }) {
   try {
-    const { categoryId } = paramsSchema.parse(context.params);
+    const params = await context.params;
+    const { categoryId } = paramsSchema.parse(params);
     const payload = updateSchema.parse(await request.json());
 
     if (payload.parentId === categoryId) {
@@ -116,9 +117,10 @@ export async function PATCH(request: Request, context: { params: unknown }) {
   }
 }
 
-export async function DELETE(_: Request, context: { params: unknown }) {
+export async function DELETE(_: Request, context: { params: Promise<unknown> }) {
   try {
-    const { categoryId } = paramsSchema.parse(context.params);
+    const params = await context.params;
+    const { categoryId } = paramsSchema.parse(params);
 
     const existing = await prisma.category.findUnique({
       where: { id: categoryId },

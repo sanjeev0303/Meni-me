@@ -13,9 +13,10 @@ const updateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-export async function PATCH(request: Request, context: { params: unknown }) {
+export async function PATCH(request: Request, context: { params: Promise<unknown> }) {
   try {
-    const { orderId } = paramsSchema.parse(context.params);
+    const params = await context.params;
+    const { orderId } = paramsSchema.parse(params);
     const payload = updateSchema.parse(await request.json());
 
     const data: Prisma.OrderUpdateInput = {};

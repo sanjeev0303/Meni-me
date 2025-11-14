@@ -239,7 +239,16 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
 
   const { data: session, isPending: isSessionPending } = useSession();
   const user = session?.user;
-  const isAdmin = (user as { role?: string } | undefined)?.role === "ADMIN";
+
+  // Check if user has admin role - better-auth includes custom fields in session
+  const isAdmin = Boolean(user && 'role' in user && user.role === "ADMIN");
+
+  // Debug logging (remove after testing)
+  useEffect(() => {
+    if (user) {
+      console.log("User session data:", { user, hasRole: 'role' in user, role: 'role' in user ? user.role : 'not found' });
+    }
+  }, [user]);
 
   const normalizedInitialCounts = useMemo(() => {
     return {
@@ -459,13 +468,14 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
           Cart
         </Link>
         {isAdmin ? (
-          <Link
-            href="/admin/dashboard"
-            className="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100"
-            onClick={() => setIsUserMenuOpen(false)}
-          >
-            Admin dashboard
-          </Link>
+        //   <Link
+        //     href="/admin/dashboard"
+        //     className="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100"
+        //     onClick={() => setIsUserMenuOpen(false)}
+        //   >
+        //     Admin dashboard
+        //   </Link>
+        ''
         ) : null}
         <button
           type="button"

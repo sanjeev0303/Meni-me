@@ -52,9 +52,10 @@ const toDecimal = (value: unknown) => {
   return new Prisma.Decimal(numeric.toFixed(2));
 };
 
-export async function GET(_: Request, context: { params: unknown }) {
+export async function GET(_: Request, context: { params: Promise<unknown> }) {
   try {
-    const { productId } = productIdSchema.parse(context.params);
+    const params = await context.params;
+    const { productId } = productIdSchema.parse(params);
     const product = await prisma.product.findUnique({
       where: { id: productId },
       include: {
@@ -86,9 +87,10 @@ export async function GET(_: Request, context: { params: unknown }) {
   }
 }
 
-export async function PATCH(request: Request, context: { params: unknown }) {
+export async function PATCH(request: Request, context: { params: Promise<unknown> }) {
   try {
-    const { productId } = productIdSchema.parse(context.params);
+    const params = await context.params;
+    const { productId } = productIdSchema.parse(params);
     const payload = productUpdateSchema.parse(await request.json());
 
     const updates: Record<string, unknown> = {};
@@ -171,9 +173,10 @@ export async function PATCH(request: Request, context: { params: unknown }) {
   }
 }
 
-export async function DELETE(_: Request, context: { params: unknown }) {
+export async function DELETE(_: Request, context: { params: Promise<unknown> }) {
   try {
-    const { productId } = productIdSchema.parse(context.params);
+    const params = await context.params;
+    const { productId } = productIdSchema.parse(params);
 
     const existing = await prisma.product.findUnique({
       where: { id: productId },

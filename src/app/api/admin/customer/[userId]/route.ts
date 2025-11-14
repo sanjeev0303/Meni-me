@@ -14,9 +14,10 @@ const updateSchema = z.object({
   role: z.nativeEnum(UserRole).optional(),
 });
 
-export async function PATCH(request: Request, context: { params: unknown }) {
+export async function PATCH(request: Request, context: { params: Promise<unknown> }) {
   try {
-    const { userId } = paramsSchema.parse(context.params);
+    const params = await context.params;
+    const { userId } = paramsSchema.parse(params);
     const payload = updateSchema.parse(await request.json());
 
     const user = await prisma.user.update({

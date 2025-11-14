@@ -4,9 +4,9 @@ import { prisma } from "@/lib/db";
 import { getUserFromRequest } from "@/lib/auth-helpers";
 
 type RouteContext = {
-  params: {
+  params: Promise<{
     addressId: string;
-  };
+  }>;
 };
 
 export async function POST(request: Request, context: RouteContext) {
@@ -17,7 +17,7 @@ export async function POST(request: Request, context: RouteContext) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { addressId } = context.params;
+    const { addressId } = await context.params;
 
     const address = await prisma.userAddress.findUnique({
       where: { id: addressId },

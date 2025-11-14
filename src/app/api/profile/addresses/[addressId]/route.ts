@@ -36,9 +36,9 @@ const parseBody = async (request: Request) => {
 };
 
 type RouteContext = {
-  params: {
+  params: Promise<{
     addressId: string;
-  };
+  }>;
 };
 
 export async function PUT(request: Request, context: RouteContext) {
@@ -55,7 +55,7 @@ export async function PUT(request: Request, context: RouteContext) {
       return NextResponse.json({ message: "Invalid input", errors: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { addressId } = context.params;
+    const { addressId } = await context.params;
 
     const existing = await prisma.userAddress.findUnique({
       where: { id: addressId },
@@ -181,7 +181,7 @@ export async function DELETE(request: Request, context: RouteContext) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { addressId } = context.params;
+    const { addressId } = await context.params;
 
     const address = await prisma.userAddress.findUnique({
       where: { id: addressId },
