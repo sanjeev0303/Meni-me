@@ -226,6 +226,7 @@ const ProductPurchasePanel = ({ productId, productName, price, compareAtPrice, s
             className="rounded-full bg-slate-900 text-white hover:bg-slate-800"
             disabled={isOutOfStock || isCartProcessing}
             onClick={handleAddToBag}
+            data-loader-skip
           >
             {isCartProcessing ? "Adding…" : "Add to bag"}
           </Button>
@@ -235,6 +236,7 @@ const ProductPurchasePanel = ({ productId, productName, price, compareAtPrice, s
             className="rounded-full"
             disabled={isWishlistProcessing}
             onClick={handleSaveToWishlist}
+            data-loader-skip
           >
             {isWishlistProcessing ? "Saving…" : "Save to wishlist"}
           </Button>

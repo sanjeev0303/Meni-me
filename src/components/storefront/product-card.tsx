@@ -148,6 +148,7 @@ const StorefrontProductCard = ({ product, className }: StorefrontProductCardProp
             disabled={isAdding}
             className="w-full rounded-full"
             variant="outline"
+            data-loader-skip
           >
             {isAdding ? "Adding..." : "Add to cart"}
           </Button>
@@ -155,6 +156,7 @@ const StorefrontProductCard = ({ product, className }: StorefrontProductCardProp
             onClick={handleCheckout}
             disabled={isAdding}
             className="w-full rounded-full"
+            data-loader-skip
           >
             {isAdding ? "Processing..." : "Buy now"}
           </Button>

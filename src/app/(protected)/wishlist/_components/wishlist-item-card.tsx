@@ -115,6 +115,7 @@ export function WishlistItemCard({
             onClick={handleMoveToCart}
             disabled={isLoading}
             title="Move to bag"
+            data-loader-skip
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Move to bag
@@ -127,6 +128,7 @@ export function WishlistItemCard({
           onClick={handleRemoveFromWishlist}
           disabled={isLoading}
           title="Remove from wishlist"
+          data-loader-skip
         >
           <Heart className="h-4 w-4 mr-2 fill-red-500 text-red-500" />
           Remove from wishlist

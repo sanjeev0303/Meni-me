@@ -85,6 +85,7 @@ export function CartItemCard({
           src={image}
           alt={productName}
           fill
+          sizes="80px"
           className="object-cover"
         />
       </div>
@@ -107,6 +108,7 @@ export function CartItemCard({
           onClick={handleRemove}
           disabled={isLoading}
           title="Remove from cart"
+          data-loader-skip
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -117,6 +119,7 @@ export function CartItemCard({
           onClick={handleMoveToWishlist}
           disabled={isLoading}
           title="Move to wishlist"
+          data-loader-skip
         >
           <Heart className="h-4 w-4" />
         </Button>

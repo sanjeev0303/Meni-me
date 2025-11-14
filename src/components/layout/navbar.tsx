@@ -562,6 +562,7 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
                               fill
                               sizes="192px"
                               className="object-cover"
+                              priority
                             />
                           </div>
                         </div>
