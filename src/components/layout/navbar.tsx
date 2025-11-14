@@ -467,7 +467,7 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
         >
           Cart
         </Link>
-        {isAdmin ? (
+        {/* {isAdmin ? (
           <Link
             href="/admin/dashboard"
             className="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100"
@@ -475,7 +475,7 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
           >
             Admin dashboard
           </Link>
-        ) : null}
+        ) : null} */}
         <button
           type="button"
           onClick={handleSignOut}
