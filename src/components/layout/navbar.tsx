@@ -468,14 +468,13 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
           Cart
         </Link>
         {isAdmin ? (
-        //   <Link
-        //     href="/admin/dashboard"
-        //     className="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100"
-        //     onClick={() => setIsUserMenuOpen(false)}
-        //   >
-        //     Admin dashboard
-        //   </Link>
-        ''
+          <Link
+            href="/admin/dashboard"
+            className="rounded-lg px-3 py-2 text-gray-700 transition hover:bg-gray-100"
+            onClick={() => setIsUserMenuOpen(false)}
+          >
+            Admin dashboard
+          </Link>
         ) : null}
         <button
           type="button"
