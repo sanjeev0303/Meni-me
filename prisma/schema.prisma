@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -10,25 +9,25 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  phoneNumber   String?
-  image         String?
-  avatarFileId  String?
-  role          UserRole  @default(CUSTOMER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  orders        Order[]
-  reviews       Review[]
-  cart          Cart?
-  wishlist      Wishlist?
-  addresses     UserAddress[] @relation("UserAddresses")
-  defaultAddressId String? @unique
-  defaultAddress   UserAddress? @relation("UserDefaultAddress", fields: [defaultAddressId], references: [id], onDelete: SetNull)
+  id               String        @id
+  name             String
+  email            String
+  emailVerified    Boolean       @default(false)
+  phoneNumber      String?
+  image            String?
+  avatarFileId     String?
+  role             UserRole      @default(CUSTOMER)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now()) @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  orders           Order[]
+  reviews          Review[]
+  cart             Cart?
+  wishlist         Wishlist?
+  addresses        UserAddress[] @relation("UserAddresses")
+  defaultAddressId String?       @unique
+  defaultAddress   UserAddress?  @relation("UserDefaultAddress", fields: [defaultAddressId], references: [id], onDelete: SetNull)
 
   @@unique([email])
   @@map("user")
@@ -50,7 +49,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id  @default(cuid())
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -69,7 +68,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id  @default(cuid())
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
@@ -80,55 +79,55 @@ model Verification {
 }
 
 model Product {
-  id            String             @id @default(cuid())
-  name          String
-  slug          String             @unique
-  description   String?
-  sku           String?
-  price         Decimal            @db.Decimal(10, 2)
-  compareAtPrice Decimal?          @db.Decimal(10, 2)
-  stock         Int                @default(0)
-  mediaUrls     String[]           @default([])
-  mediaFileIds  String[]           @default([])
-  isPublished   Boolean            @default(true)
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @default(now()) @updatedAt
-  categories    ProductCategory[]
-  reviews       Review[]
-  orderItems    OrderItem[]
-  cartItems     CartItem[]
-  wishlistItems WishlistItem[]
+  id             String              @id @default(cuid())
+  name           String
+  slug           String              @unique
+  description    String?
+  sku            String?
+  price          Decimal             @db.Decimal(10, 2)
+  compareAtPrice Decimal?            @db.Decimal(10, 2)
+  stock          Int                 @default(0)
+  mediaUrls      String[]            @default([])
+  mediaFileIds   String[]            @default([])
+  isPublished    Boolean             @default(true)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now()) @updatedAt
+  collections    ProductCollection[]
+  reviews        Review[]
+  orderItems     OrderItem[]
+  cartItems      CartItem[]
+  wishlistItems  WishlistItem[]
 
   @@map("product")
 }
 
-model Category {
-  id          String            @id @default(cuid())
+model Collection {
+  id          String              @id @default(cuid())
   name        String
-  slug        String            @unique
+  slug        String              @unique
   description String?
   parentId    String?
-  parent      Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children    Category[]        @relation("CategoryHierarchy")
-  products    ProductCategory[]
-  isPublished Boolean           @default(true)
+  parent      Collection?         @relation("CollectionHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Collection[]        @relation("CollectionHierarchy")
+  products    ProductCollection[]
+  isPublished Boolean             @default(true)
   imageUrl    String?
   imageFileId String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @default(now()) @updatedAt
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @default(now()) @updatedAt
 
-  @@map("category")
+  @@map("collection")
 }
 
-model ProductCategory {
-  productId String
-  categoryId String
-  assignedAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category  Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+model ProductCollection {
+  productId    String
+  collectionId String     @map("collectionId")
+  assignedAt   DateTime   @default(now())
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@id([productId, categoryId])
-  @@map("product_category")
+  @@id([productId, collectionId])
+  @@map("product_collection")
 }
 
 model Review {
@@ -149,22 +148,22 @@ model Review {
 }
 
 model Order {
-  id             String         @id @default(cuid())
-  orderNumber    String         @unique
-  status         OrderStatus    @default(PENDING)
-  paymentStatus  PaymentStatus  @default(PENDING)
-  subtotal       Decimal        @db.Decimal(10, 2)
-  shippingFee    Decimal?       @db.Decimal(10, 2)
-  tax            Decimal?       @db.Decimal(10, 2)
-  total          Decimal        @db.Decimal(10, 2)
-  currency       String         @default("USD")
-  notes          String?
-  placedAt       DateTime       @default(now())
-  fulfilledAt    DateTime?
-  cancelledAt    DateTime?
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  subtotal        Decimal       @db.Decimal(10, 2)
+  shippingFee     Decimal?      @db.Decimal(10, 2)
+  tax             Decimal?      @db.Decimal(10, 2)
+  total           Decimal       @db.Decimal(10, 2)
+  currency        String        @default("USD")
+  notes           String?
+  placedAt        DateTime      @default(now())
+  fulfilledAt     DateTime?
+  cancelledAt     DateTime?
   shippingAddress Json?
   billingAddress  Json?
-  userId         String
+  userId          String
 
   user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   items OrderItem[]
@@ -173,12 +172,12 @@ model Order {
 }
 
 model OrderItem {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   orderId     String
   productId   String
-  quantity    Int      @default(1)
-  unitPrice   Decimal  @db.Decimal(10, 2)
-  lineTotal   Decimal  @db.Decimal(10, 2)
+  quantity    Int     @default(1)
+  unitPrice   Decimal @db.Decimal(10, 2)
+  lineTotal   Decimal @db.Decimal(10, 2)
   productName String
   productSku  String?
 
@@ -190,10 +189,10 @@ model OrderItem {
 }
 
 model Cart {
-  id        String     @id @default(cuid())
-  userId    String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now()) @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items CartItem[]
@@ -202,10 +201,10 @@ model Cart {
 }
 
 model CartItem {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   cartId    String
   productId String
-  quantity  Int     @default(1)
+  quantity  Int      @default(1)
   addedAt   DateTime @default(now())
 
   cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
@@ -216,12 +215,12 @@ model CartItem {
 }
 
 model Wishlist {
-  id        String        @id @default(cuid())
-  userId    String        @unique
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @default(now()) @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   items WishlistItem[]
 
   @@map("wishlist")
@@ -241,22 +240,22 @@ model WishlistItem {
 }
 
 model UserAddress {
-  id             String   @id @default(cuid())
-  userId         String
-  label          String?
-  fullName       String
-  phoneNumber    String?
-  streetLine1    String
-  streetLine2    String?
-  city           String
-  state          String?
-  postalCode     String?
-  country        String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now()) @updatedAt
+  id          String   @id @default(cuid())
+  userId      String
+  label       String?
+  fullName    String
+  phoneNumber String?
+  streetLine1 String
+  streetLine2 String?
+  city        String
+  state       String?
+  postalCode  String?
+  country     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
-  user            User  @relation("UserAddresses", fields: [userId], references: [id], onDelete: Cascade)
-  defaultForUser  User? @relation("UserDefaultAddress")
+  user           User  @relation("UserAddresses", fields: [userId], references: [id], onDelete: Cascade)
+  defaultForUser User? @relation("UserDefaultAddress")
 
   @@map("user_address")
 }

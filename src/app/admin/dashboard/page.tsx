@@ -7,9 +7,11 @@ import PerformanceGraph from "../_components/performance-graph";
 import { ArrowDownRight, ArrowUpRight, ShoppingBag, Users2 } from "lucide-react";
 import Link from "next/link";
 
+type AdminReportSummary = Awaited<ReturnType<typeof getAdminReportSummary>>;
+
 const DashboardPage = async () => {
-  const report = await getAdminReportSummary();
-  const { kpis, revenueTrend, topProducts, categoryPerformance, newCustomers, recentOrders, orderTotals } = report;
+  const report: AdminReportSummary = await getAdminReportSummary();
+  const { kpis, revenueTrend, topProducts, collectionPerformance, newCustomers, recentOrders, orderTotals } = report;
   const statusPriority = ["PENDING", "PROCESSING", "SHIPPED", "RETURNED", "CANCELLED"];
   const nonDeliveredOrders = recentOrders
     .filter((order) => order.status !== "DELIVERED")
@@ -241,24 +243,24 @@ const DashboardPage = async () => {
         </div>
 
         <div className="rounded-3xl border border-slate-100 bg-white/90 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Category mix</h2>
-          <p className="text-sm text-slate-500">Demand split across merchandising categories.</p>
+          <h2 className="text-lg font-semibold text-slate-900">Collection mix</h2>
+          <p className="text-sm text-slate-500">Demand split across merchandising collections.</p>
           <div className="mt-6 space-y-4">
-            {categoryPerformance.map((category) => (
-              <div key={category.id} className="flex items-center justify-between">
+            {collectionPerformance.map((collection) => (
+              <div key={collection.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="h-10 w-10 rounded-full bg-slate-900/10 text-center text-sm font-semibold leading-10 text-slate-900">
-                    {category.name.slice(0, 2).toUpperCase()}
+                    {collection.name.slice(0, 2).toUpperCase()}
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">{category.name}</p>
-                    <p className="text-xs text-slate-500">{formatNumber(category.quantitySold)} units</p>
+                    <p className="text-sm font-semibold text-slate-900">{collection.name}</p>
+                    <p className="text-xs text-slate-500">{formatNumber(collection.quantitySold)} units</p>
                   </div>
                 </div>
                 <div className="h-2 w-32 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className="h-full bg-slate-900"
-                    style={{ width: `${Math.min(100, category.quantitySold)}%` }}
+                    style={{ width: `${Math.min(100, collection.quantitySold)}%` }}
                   />
                 </div>
               </div>

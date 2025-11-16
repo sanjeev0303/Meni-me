@@ -4,7 +4,7 @@ import { z } from "zod";
 import { deleteImageKitFile } from "@/lib/imagekit";
 
 const paramsSchema = z.object({
-  categoryId: z.string().min(1),
+  collectionId: z.string().min(1),
 });
 
 const imageItemSchema = z.object({
@@ -25,13 +25,13 @@ const updateSchema = z.object({
   image: imageItemSchema.nullable().optional(),
 });
 
-const serializeCategory = <T extends { imageUrl: string | null; imageFileId: string | null }>(category: T) => ({
-  ...category,
+const serializeCollection = <T extends { imageUrl: string | null; imageFileId: string | null }>(collection: T) => ({
+  ...collection,
   image:
-    category.imageUrl && category.imageFileId
+    collection.imageUrl && collection.imageFileId
       ? {
-          url: category.imageUrl,
-          fileId: category.imageFileId,
+          url: collection.imageUrl,
+          fileId: collection.imageFileId,
         }
       : null,
 });
@@ -39,25 +39,25 @@ const serializeCategory = <T extends { imageUrl: string | null; imageFileId: str
 export async function PATCH(request: Request, context: { params: Promise<unknown> }) {
   try {
     const params = await context.params;
-    const { categoryId } = paramsSchema.parse(params);
+    const { collectionId } = paramsSchema.parse(params);
     const payload = updateSchema.parse(await request.json());
 
-    if (payload.parentId === categoryId) {
+    if (payload.parentId === collectionId) {
       return NextResponse.json(
-        { message: "A category cannot be its own parent" },
+        { message: "A collection cannot be its own parent" },
         { status: 400 },
       );
     }
 
-    const existing = await prisma.category.findUnique({
-      where: { id: categoryId },
+    const existing = await prisma.collection.findUnique({
+      where: { id: collectionId },
       select: {
         imageFileId: true,
       },
     });
 
     if (!existing) {
-      return NextResponse.json({ message: "Category not found" }, { status: 404 });
+      return NextResponse.json({ message: "Collection not found" }, { status: 404 });
     }
 
     const data: Record<string, unknown> = {};
@@ -95,8 +95,8 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
       }
     }
 
-    const category = await prisma.category.update({
-      where: { id: categoryId },
+    const collection = await prisma.collection.update({
+      where: { id: collectionId },
       data,
       include: { parent: true },
     });
@@ -105,25 +105,25 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
       await deleteImageKitFile(fileIdToDelete);
     }
 
-    return NextResponse.json(serializeCategory(category));
+    return NextResponse.json(serializeCollection(collection));
   } catch (error) {
-    console.error("[ADMIN_CATEGORY_PATCH]", error);
+    console.error("[ADMIN_COLLECTION_PATCH]", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: "Invalid data", issues: error.issues }, { status: 422 });
     }
 
-    return NextResponse.json({ message: "Failed to update category" }, { status: 500 });
+    return NextResponse.json({ message: "Failed to update collection" }, { status: 500 });
   }
 }
 
 export async function DELETE(_: Request, context: { params: Promise<unknown> }) {
   try {
     const params = await context.params;
-    const { categoryId } = paramsSchema.parse(params);
+    const { collectionId } = paramsSchema.parse(params);
 
-    const existing = await prisma.category.findUnique({
-      where: { id: categoryId },
+    const existing = await prisma.collection.findUnique({
+      where: { id: collectionId },
       select: {
         imageFileId: true,
       },
@@ -133,11 +133,11 @@ export async function DELETE(_: Request, context: { params: Promise<unknown> }) 
       await deleteImageKitFile(existing.imageFileId);
     }
 
-    await prisma.category.delete({ where: { id: categoryId } });
+    await prisma.collection.delete({ where: { id: collectionId } });
 
     return NextResponse.json({ deleted: true });
   } catch (error) {
-    console.error("[ADMIN_CATEGORY_DELETE]", error);
-    return NextResponse.json({ message: "Failed to delete category" }, { status: 500 });
+    console.error("[ADMIN_COLLECTION_DELETE]", error);
+    return NextResponse.json({ message: "Failed to delete collection" }, { status: 500 });
   }
 }

@@ -23,7 +23,7 @@ const imageItemSchema = z.object({
   thumbnailUrl: z.string().optional().nullable(),
 });
 
-const categoryFormSchema = z.object({
+const collectionFormSchema = z.object({
   name: z.string().min(1, "Required"),
   slug: z
     .string()
@@ -45,14 +45,14 @@ const fetcher = async <T,>(url: string): Promise<T> => {
   return res.json();
 };
 
-type CategoryImageResponse = {
+type CollectionImageResponse = {
   url: string;
   fileId: string;
   name?: string | null;
   thumbnailUrl?: string | null;
 };
 
-type CategoryResponse = {
+type CollectionResponse = {
   id: string;
   name: string;
   slug: string;
@@ -62,35 +62,35 @@ type CategoryResponse = {
   isPublished: boolean;
   imageUrl: string | null;
   imageFileId: string | null;
-  image: CategoryImageResponse | null;
+  image: CollectionImageResponse | null;
   createdAt: string;
 };
 
-const mapCategoryToForm = (category: CategoryResponse) => ({
-  name: category.name,
-  slug: category.slug,
-  description: category.description ?? "",
-  parentId: category.parentId ?? "",
-  isPublished: category.isPublished,
+const mapCollectionToForm = (collection: CollectionResponse) => ({
+  name: collection.name,
+  slug: collection.slug,
+  description: collection.description ?? "",
+  parentId: collection.parentId ?? "",
+  isPublished: collection.isPublished,
   image:
-    category.image?.url && category.image?.fileId
+    collection.image?.url && collection.image?.fileId
       ? {
-          url: category.image.url,
-          fileId: category.image.fileId,
-          name: category.image.name ?? undefined,
-          thumbnailUrl: category.image.thumbnailUrl ?? undefined,
+          url: collection.image.url,
+          fileId: collection.image.fileId,
+          name: collection.image.name ?? undefined,
+          thumbnailUrl: collection.image.thumbnailUrl ?? undefined,
         }
-      : category.imageUrl && category.imageFileId
+      : collection.imageUrl && collection.imageFileId
         ? {
-            url: category.imageUrl,
-            fileId: category.imageFileId,
+            url: collection.imageUrl,
+            fileId: collection.imageFileId,
           }
         : null,
 });
 
-type CategoryFormValues = z.infer<typeof categoryFormSchema>;
+type CollectionFormValues = z.infer<typeof collectionFormSchema>;
 
-const defaultValues: CategoryFormValues = {
+const defaultValues: CollectionFormValues = {
   name: "",
   slug: "",
   description: "",
@@ -99,30 +99,37 @@ const defaultValues: CategoryFormValues = {
   image: null,
 };
 
-type CategoryClientProps = {
-  initialCategories?: CategoryResponse[];
+type CollectionsClientProps = {
+  initialCollections?: CollectionResponse[];
 };
 
-const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
+const CollectionsClient = ({ initialCollections }: CollectionsClientProps) => {
   const queryClient = useQueryClient();
-  const [selectedCategory, setSelectedCategory] = useState<CategoryResponse | null>(null);
+  const [selectedCollection, setSelectedCollection] = useState<CollectionResponse | null>(null);
 
-  const { data: categories = [], isFetching: categoriesLoading } = useQuery({
-    queryKey: ["admin", "categories"],
-    queryFn: () => fetcher<CategoryResponse[]>("/api/admin/category"),
-    initialData: initialCategories,
+  const normalizeSlugInput = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$|\s+/g, "");
+
+  const { data: collections = [], isFetching: collectionsLoading } = useQuery({
+    queryKey: ["admin", "collections"],
+    queryFn: () => fetcher<CollectionResponse[]>("/api/admin/collections"),
+    initialData: initialCollections,
   });
 
-  const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema),
+  const form = useForm<CollectionFormValues>({
+    resolver: zodResolver(collectionFormSchema),
     defaultValues,
   });
 
   const createMutation = useMutation({
-    mutationFn: async (payload: CategoryFormValues) => {
+    mutationFn: async (payload: CollectionFormValues) => {
       const { image, ...rest } = payload;
 
-      const response = await fetch("/api/admin/category", {
+      const response = await fetch("/api/admin/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -134,25 +141,25 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
       });
 
       if (!response.ok) {
-        const body = await response.json().catch(() => ({ message: "Unable to create category" }));
-        throw new Error(body.message ?? "Unable to create category");
+        const body = await response.json().catch(() => ({ message: "Unable to create collection" }));
+        throw new Error(body.message ?? "Unable to create collection");
       }
 
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "collections"] });
       resetForm();
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (payload: CategoryFormValues) => {
-      if (!selectedCategory) return;
+    mutationFn: async (payload: CollectionFormValues) => {
+      if (!selectedCollection) return;
 
       const { image, ...rest } = payload;
 
-      const response = await fetch(`/api/admin/category/${selectedCategory.id}`, {
+      const response = await fetch(`/api/admin/collections/${selectedCollection.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -164,42 +171,42 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
       });
 
       if (!response.ok) {
-        const body = await response.json().catch(() => ({ message: "Unable to update category" }));
-        throw new Error(body.message ?? "Unable to update category");
+        const body = await response.json().catch(() => ({ message: "Unable to update collection" }));
+        throw new Error(body.message ?? "Unable to update collection");
       }
 
       return response.json();
     },
     onSuccess: (data) => {
-      setSelectedCategory(data);
-      queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
+      setSelectedCollection(data);
+      queryClient.invalidateQueries({ queryKey: ["admin", "collections"] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedCategory) return;
+      if (!selectedCollection) return;
 
-      const response = await fetch(`/api/admin/category/${selectedCategory.id}`, {
+      const response = await fetch(`/api/admin/collections/${selectedCollection.id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        const body = await response.json().catch(() => ({ message: "Unable to delete category" }));
-        throw new Error(body.message ?? "Unable to delete category");
+        const body = await response.json().catch(() => ({ message: "Unable to delete collection" }));
+        throw new Error(body.message ?? "Unable to delete collection");
       }
 
       return true;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "collections"] });
       resetForm();
     },
   });
 
   function resetForm() {
     form.reset(defaultValues);
-    setSelectedCategory(null);
+    setSelectedCollection(null);
     createMutation.reset();
     updateMutation.reset();
     deleteMutation.reset();
@@ -210,15 +217,15 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
     (updateMutation.error as Error | undefined) ||
     (deleteMutation.error as Error | undefined);
 
-  const enrichedCategories = useMemo(() => {
-    return categories.map((category) => ({
-      ...category,
-      childCount: categories.filter((item) => item.parentId === category.id).length,
+  const enrichedCollections = useMemo(() => {
+    return collections.map((collection) => ({
+      ...collection,
+      childCount: collections.filter((item) => item.parentId === collection.id).length,
     }));
-  }, [categories]);
+  }, [collections]);
 
-  const onSubmit: SubmitHandler<CategoryFormValues> = (values) => {
-    if (selectedCategory) {
+  const onSubmit: SubmitHandler<CollectionFormValues> = (values) => {
+    if (selectedCollection) {
       return updateMutation.mutate(values);
     }
 
@@ -230,17 +237,17 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">Category library</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Collection library</h2>
             <p className="text-sm text-slate-500">
-              {categoriesLoading ? "Loading categories…" : `${formatNumber(categories.length)} total groups`}
+              {collectionsLoading ? "Loading collections…" : `${formatNumber(collections.length)} total groups`}
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ["admin", "categories"] })}>
+            <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ["admin", "collections"] })}>
               <RefreshCcw className="mr-1 h-4 w-4" /> Refresh
             </Button>
             <Button size="sm" onClick={resetForm}>
-              <Plus className="mr-1 h-4 w-4" /> New category
+              <Plus className="mr-1 h-4 w-4" /> New collection
             </Button>
           </div>
         </div>
@@ -249,42 +256,42 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
           <table className="min-w-full divide-y divide-slate-100 text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-[0.3em] text-slate-500">
               <tr>
-                <th className="px-4 py-3">Category</th>
+                <th className="px-4 py-3">Collection</th>
                 <th className="px-4 py-3">Parent</th>
                 <th className="px-4 py-3">Children</th>
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {enrichedCategories.map((category) => {
-                const isSelected = selectedCategory?.id === category.id;
+              {enrichedCollections.map((collection) => {
+                const isSelected = selectedCollection?.id === collection.id;
                 return (
                   <tr
-                    key={category.id}
+                    key={collection.id}
                     className={cn("cursor-pointer transition hover:bg-slate-50", isSelected ? "bg-slate-900/5" : "")}
                     onClick={() => {
-                      setSelectedCategory(category);
-                      form.reset(mapCategoryToForm(category));
+                      setSelectedCollection(collection);
+                      form.reset(mapCollectionToForm(collection));
                     }}
                   >
                     <td className="px-4 py-3">
-                      <p className="text-sm font-semibold text-slate-900">{category.name}</p>
-                      <p className="text-xs text-slate-500">/{category.slug}</p>
+                      <p className="text-sm font-semibold text-slate-900">{collection.name}</p>
+                      <p className="text-xs text-slate-500">/{collection.slug}</p>
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-600">
-                      {category.parent ? category.parent.name : "Root"}
+                      {collection.parent ? collection.parent.name : "Root"}
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{category.childCount}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{collection.childCount}</td>
                     <td className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-                      {category.isPublished ? "Published" : "Draft"}
+                      {collection.isPublished ? "Published" : "Draft"}
                     </td>
                   </tr>
                 );
               })}
-              {enrichedCategories.length === 0 ? (
+              {enrichedCollections.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-4 py-10 text-center text-sm text-slate-500">
-                    {categoriesLoading ? "Loading categories…" : "No categories yet. Create your first grouping."}
+                    {collectionsLoading ? "Loading collections…" : "No collections yet. Create your first grouping."}
                   </td>
                 </tr>
               ) : null}
@@ -298,18 +305,18 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">
-                {selectedCategory ? "Update category" : "Create category"}
+                {selectedCollection ? "Update collection" : "Create collection"}
               </h2>
               <p className="text-sm text-slate-500">Organize products by publishing curated collections.</p>
             </div>
-            {selectedCategory ? (
+            {selectedCollection ? (
               <Button
                 variant="destructive"
                 size="icon"
                 className="rounded-full"
                 disabled={deleteMutation.isPending}
                 onClick={() => deleteMutation.mutate()}
-                aria-label="Delete category"
+                aria-label="Delete collection"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -343,9 +350,13 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                   <FormItem>
                     <FormLabel>Slug</FormLabel>
                     <FormControl>
-                      <Input placeholder="summer-essentials" {...field} />
+                      <Input
+                        placeholder="summer-essentials"
+                        {...field}
+                        onChange={(event) => field.onChange(normalizeSlugInput(event.target.value))}
+                      />
                     </FormControl>
-                    <FormDescription>Used in category URLs.</FormDescription>
+                    <FormDescription>Used in collection URLs.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -370,15 +381,15 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category image</FormLabel>
-                    <FormDescription>Appears on storefront category headers and promotions.</FormDescription>
+                    <FormLabel>Collection image</FormLabel>
+                    <FormDescription>Appears on storefront collection headers and promotions.</FormDescription>
                     <FormControl>
                       <ImageKitUpload
                         value={field.value ? [field.value as ImageKitUploadValue] : []}
                         onChange={(next) => field.onChange(next[0] ?? null)}
                         multiple={false}
                         maxFiles={1}
-                        folder="/categories"
+                        folder="/collections"
                         emptyHint="Use high-resolution imagery for best results"
                       />
                     </FormControl>
@@ -392,7 +403,7 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                 name="parentId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Parent category</FormLabel>
+                    <FormLabel>Parent collection</FormLabel>
                     <FormControl>
                       <select
                         className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
@@ -400,8 +411,8 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                         onChange={(event) => field.onChange(event.target.value)}
                       >
                         <option value="">No parent</option>
-                        {categories
-                          .filter((option) => option.id !== selectedCategory?.id)
+                        {collections
+                          .filter((option) => option.id !== selectedCollection?.id)
                           .map((option) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -409,7 +420,7 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                           ))}
                       </select>
                     </FormControl>
-                    <FormDescription>Nest categories for navigational clarity.</FormDescription>
+                    <FormDescription>Nest collections for navigational clarity.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -421,8 +432,8 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
                     <div>
-                      <FormLabel className="text-sm font-semibold">Publish category</FormLabel>
-                      <FormDescription>Draft categories stay hidden from shoppers.</FormDescription>
+                      <FormLabel className="text-sm font-semibold">Publish collection</FormLabel>
+                      <FormDescription>Draft collections stay hidden from shoppers.</FormDescription>
                     </div>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -436,24 +447,24 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                  {selectedCategory ? "Save changes" : "Create category"}
+                  {selectedCollection ? "Save changes" : "Create collection"}
                 </Button>
               </div>
             </form>
           </Form>
         </div>
 
-        {selectedCategory ? (
+        {selectedCollection ? (
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Insights</h3>
             <dl className="mt-4 space-y-3 text-sm text-slate-600">
               <div className="flex justify-between">
                 <dt>Created</dt>
-                <dd>{new Date(selectedCategory.createdAt).toLocaleDateString()}</dd>
+                <dd>{new Date(selectedCollection.createdAt).toLocaleDateString()}</dd>
               </div>
               <div className="flex justify-between">
                 <dt>Status</dt>
-                <dd>{selectedCategory.isPublished ? "Published" : "Draft"}</dd>
+                <dd>{selectedCollection.isPublished ? "Published" : "Draft"}</dd>
               </div>
             </dl>
           </div>
@@ -463,5 +474,5 @@ const CategoryClient = ({ initialCategories }: CategoryClientProps) => {
   );
 };
 
-export default CategoryClient;
-export type { CategoryResponse };
+export default CollectionsClient;
+export type { CollectionResponse };

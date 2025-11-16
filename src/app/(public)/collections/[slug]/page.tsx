@@ -4,69 +4,69 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import StorefrontProductCard from "@/components/storefront/product-card";
 import { Button } from "@/components/ui/button";
-import { getCategoryWithProductsBySlug } from "@/lib/storefront/catalog";
+import { getCollectionWithProductsBySlug } from "@/lib/storefront/catalog";
 import type { Metadata } from "next";
 
 export const revalidate = 60;
 
-type CategoryPageProps = {
+type CollectionPageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
 
 const buildMetadata = async (slug: string) => {
-  const data = await getCategoryWithProductsBySlug(slug);
+  const data = await getCollectionWithProductsBySlug(slug);
 
   if (!data) {
     return null;
   }
 
-  const { category } = data;
+  const { collection } = data;
 
-  const description = category.description
-    ? category.description
-    : `Discover curated ${category.name} pieces from Hub Fashiion.`;
+  const description = collection.description
+    ? collection.description
+    : `Discover curated ${collection.name} pieces from Hub Fashiion.`;
 
   return {
-    title: `${category.name} · Hub Fashiion`,
+    title: `${collection.name} · Hub Fashiion`,
     description,
   } satisfies Metadata;
 };
 
-export const generateMetadata = async ({ params }: CategoryPageProps): Promise<Metadata> => {
+export const generateMetadata = async ({ params }: CollectionPageProps): Promise<Metadata> => {
   const { slug } = await params;
   return (await buildMetadata(slug)) ?? {};
 };
 
-const CategoryPage = async ({ params }: CategoryPageProps) => {
+const CollectionPage = async ({ params }: CollectionPageProps) => {
   const { slug } = await params;
-  const data = await getCategoryWithProductsBySlug(slug);
+  const data = await getCollectionWithProductsBySlug(slug);
 
   if (!data) {
     notFound();
   }
 
-  const { category, children, products } = data;
-  const heroImage = category.image;
+  const { collection, children, products } = data;
+  const heroImage = collection.image;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-10 sm:px-6 lg:px-0">
       <nav className="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-slate-400">
-        <Link href="/category" className="hover:text-slate-900">
-          Categories
+        <Link href="/collections" className="hover:text-slate-900">
+          Collections
         </Link>
         <ArrowRight className="h-3 w-3" />
-        <span className="text-slate-500">{category.name}</span>
+        <span className="text-slate-500">{collection.name}</span>
       </nav>
 
       <section className="mt-8 overflow-hidden rounded-3xl border border-slate-200">
-  <div className="grid min-h-80 gap-0 overflow-hidden bg-white lg:grid-cols-[1.2fr_1fr]">
+        <div className="grid min-h-80 gap-0 overflow-hidden bg-white lg:grid-cols-[1.2fr_1fr]">
           <div className="relative overflow-hidden">
             {heroImage ? (
               <Image
                 src={heroImage.url}
-                alt={category.name}
+                alt={collection.name}
                 fill
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 className="object-cover"
@@ -75,7 +75,7 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-slate-200 via-slate-100 to-slate-300">
                 <span className="text-lg font-semibold uppercase tracking-[0.4em] text-slate-500">
-                  {category.name}
+                  {collection.name}
                 </span>
               </div>
             )}
@@ -84,13 +84,13 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
           <div className="flex flex-col justify-between gap-6 p-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                {category.parent ? category.parent.name : "Category"}
+                {collection.parent ? collection.parent.name : "Collection"}
               </p>
               <h1 className="text-4xl font-black uppercase tracking-tight text-slate-900">
-                {category.name}
+                {collection.name}
               </h1>
-              {category.description ? (
-                <p className="text-sm leading-relaxed text-slate-600">{category.description}</p>
+              {collection.description ? (
+                <p className="text-sm leading-relaxed text-slate-600">{collection.description}</p>
               ) : null}
             </div>
 
@@ -102,9 +102,9 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full border-slate-300">
-                <Link href="/category" className="inline-flex items-center gap-2">
+                <Link href="/collections" className="inline-flex items-center gap-2">
                   <ArrowLeft className="h-4 w-4" />
-                  Shop all categories
+                  Shop all collections
                 </Link>
               </Button>
             </div>
@@ -126,13 +126,13 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
             {children.map((child) => (
               <Link
                 key={child.id}
-                href={`/category/${child.slug}`}
+                href={`/collections/${child.slug}`}
                 className="group flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                      {child.parent?.name ?? category.name}
+                      {child.parent?.name ?? collection.name}
                     </p>
                     <h3 className="text-lg font-semibold text-slate-900">{child.name}</h3>
                   </div>
@@ -172,7 +172,7 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
           </div>
         ) : (
           <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50/60 p-12 text-center text-slate-500">
-            No products in this category yet. Add favorites to your wishlist and be the first to know when they drop.
+            No products in this collection yet. Add favorites to your wishlist and be the first to know when they drop.
           </div>
         )}
       </section>
@@ -180,4 +180,4 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
   );
 };
 
-export default CategoryPage;
+export default CollectionPage;

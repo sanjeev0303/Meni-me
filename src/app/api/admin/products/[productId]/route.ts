@@ -31,7 +31,7 @@ const productUpdateSchema = z.object({
   mediaUrls: z.array(z.string().url()).optional(),
   mediaFileIds: z.array(z.string()).optional(),
   isPublished: z.boolean().optional(),
-  categoryIds: z.array(z.string().min(1)).optional(),
+  collectionIds: z.array(z.string().min(1)).optional(),
 });
 
 const toDecimal = (value: unknown) => {
@@ -59,9 +59,9 @@ export async function GET(_: Request, context: { params: Promise<unknown> }) {
     const product = await prisma.product.findUnique({
       where: { id: productId },
       include: {
-        categories: {
+        collections: {
           include: {
-            category: true,
+            collection: true,
           },
         },
       },
@@ -79,7 +79,7 @@ export async function GET(_: Request, context: { params: Promise<unknown> }) {
         url,
         fileId: product.mediaFileIds[index] ?? "",
       })),
-      categories: product.categories.map((pivot) => pivot.category),
+  collections: product.collections.map((pivot) => pivot.collection),
     });
   } catch (error) {
     console.error("[ADMIN_PRODUCT_GET]", error);
@@ -123,21 +123,21 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
         where: { id: productId },
         data: updates,
         include: {
-          categories: {
+          collections: {
             include: {
-              category: true,
+              collection: true,
             },
           },
         },
       });
 
-      if (payload.categoryIds) {
-        await tx.productCategory.deleteMany({ where: { productId } });
-        if (payload.categoryIds.length > 0) {
-          await tx.productCategory.createMany({
-            data: payload.categoryIds.map((categoryId) => ({
+      if (payload.collectionIds) {
+        await tx.productCollection.deleteMany({ where: { productId } });
+        if (payload.collectionIds.length > 0) {
+          await tx.productCollection.createMany({
+            data: payload.collectionIds.map((collectionId) => ({
               productId,
-              categoryId,
+              collectionId,
             })),
             skipDuplicates: true,
           });
@@ -147,9 +147,9 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
       return product;
     });
 
-    const categories = await prisma.productCategory.findMany({
+    const collections = await prisma.productCollection.findMany({
       where: { productId },
-      include: { category: true },
+      include: { collection: true },
     });
 
     return NextResponse.json({
@@ -160,7 +160,7 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
         url,
         fileId: result.mediaFileIds[index] ?? "",
       })),
-      categories: categories.map((pivot) => pivot.category),
+      collections: collections.map((pivot) => pivot.collection),
     });
   } catch (error) {
     console.error("[ADMIN_PRODUCT_PATCH]", error);

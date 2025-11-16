@@ -41,7 +41,7 @@ type TopProduct = {
   price: number;
 };
 
-type CategoryPerformance = {
+type CollectionPerformance = {
   id: string;
   name: string;
   quantitySold: number;
@@ -78,7 +78,7 @@ type ReportResponse = {
   kpis: KpiSummary;
   revenueTrend: TrendPoint[];
   topProducts: TopProduct[];
-  categoryPerformance: CategoryPerformance[];
+  collectionPerformance: CollectionPerformance[];
   newCustomers: NewCustomer[];
   recentOrders: RecentOrder[];
   orderTotals: OrderTotals;
@@ -259,16 +259,16 @@ const ReportClient = ({ initialReport }: ReportClientProps) => {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
-            Category performance
+            Collection performance
           </h3>
           <div className="mt-4 space-y-4">
-            {report.categoryPerformance.length === 0 ? (
-              <p className="text-sm text-slate-500">No category data yet.</p>
+            {report.collectionPerformance.length === 0 ? (
+              <p className="text-sm text-slate-500">No collection data yet.</p>
             ) : (
-              report.categoryPerformance.map((category) => (
-                <div key={category.id} className="flex items-center justify-between text-sm text-slate-600">
-                  <p>{category.name}</p>
-                  <p className="font-semibold text-slate-900">{formatNumber(category.quantitySold)}</p>
+              report.collectionPerformance.map((collection) => (
+                <div key={collection.id} className="flex items-center justify-between text-sm text-slate-600">
+                  <p>{collection.name}</p>
+                  <p className="font-semibold text-slate-900">{formatNumber(collection.quantitySold)}</p>
                 </div>
               ))
             )}

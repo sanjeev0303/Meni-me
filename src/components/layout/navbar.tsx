@@ -9,182 +9,7 @@ import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { signOut, useSession } from "@/lib/auth-client";
-
-type MenuSublink = {
-  label: string;
-  href: string;
-};
-
-type MegaMenuColumn = {
-  title: string;
-  links: string[];
-};
-
-type MenuItem =
-  | {
-      label: string;
-      href: string;
-      type: "simple";
-      sublinks?: MenuSublink[];
-      isSale?: boolean;
-    }
-  | {
-      label: string;
-      href: string;
-      type: "mega";
-      columns: MegaMenuColumn[];
-      image?: string;
-      isSale?: boolean;
-    };
-
-const menuItems: MenuItem[] = [
-  {
-    label: "SALE",
-    href: "#",
-    type: "simple",
-    isSale: true,
-    sublinks: [
-      { label: "MEN", href: "#" },
-      { label: "WOMEN", href: "#" },
-      { label: "FOOTWEAR", href: "#" },
-      { label: "BELTS & WALLETS", href: "#" },
-    ],
-  },
-  {
-    label: "MEN",
-    href: "#",
-    type: "mega",
-    columns: [
-      {
-        title: "CLOTHING",
-        links: [
-          "Jeans",
-          "Chinos & Pants",
-          "T-Shirts",
-          "Shirts",
-          "Polos",
-          "Shorts",
-          "Cargo",
-          "Jackets",
-          "Sweaters",
-          "Sweatshirts",
-          "Must Have",
-        ],
-      },
-      {
-        title: "SHOP JEANS BY FIT",
-        links: ["Baggy", "Loose", "Relaxed", "Straight", "Slim", "Skinny", "Bootcut"],
-      },
-      {
-        title: "JEANS BY STYLE",
-        links: [
-          "568™ Loose Fit",
-          "578™ Baggy Fit",
-          "555™ Relaxed Fit",
-          "501® Original Straight Fit",
-          "511™ Slim Fit",
-          "512™ Slim Tapered",
-          "513™ Slim Straight",
-          "550™ Relaxed Fit",
-          "505™ Straight Fit",
-          "541™ Athletic Tapered Fit",
-        ],
-      },
-      {
-        title: "T-SHIRTS & SHIRTS",
-        links: [
-          "T-Shirts",
-          "Oversized T-Shirts",
-          "Shirts",
-          "Polo Shirts",
-          "Linen Shirts",
-          "Oxford Shirts",
-          "Denim Shirts",
-          "Striped Shirts",
-          "Corduroy Shirts",
-        ],
-      },
-      {
-        title: "FOOTWEAR & ACCESSORIES",
-        links: ["Belts", "Casual Shoes", "Wallets"],
-      },
-    ],
-    image: "/men-denim-fashion.jpg",
-  },
-  {
-    label: "WOMEN",
-    href: "#",
-    type: "mega",
-    columns: [
-      {
-        title: "CLOTHING",
-        links: [
-          "Jeans",
-          "T-Shirts",
-          "Tops",
-          "Shirts",
-          "Jackets",
-          "Shorts",
-          "Dresses",
-          "Skirts",
-          "Pants & Trousers",
-          "Joggers",
-          "Jumpsuits",
-          "Corset Tops",
-          "Sweatshirts",
-          "Sweaters",
-          "Must Have",
-        ],
-      },
-      {
-        title: "SHOP JEANS BY FIT",
-        links: ["Baggy", "Skinny", "Flare", "Loose", "Straight", "High Rise", "Wide Leg"],
-      },
-      {
-        title: "JEANS BY STYLE",
-        links: [
-          "725™ High Rise Bootcut",
-          "Ribcage Straight",
-          "311™ Shaping Skinny",
-          "312™ Shaping Slim",
-          "501® Original",
-          "710™ Super Skinny",
-          "711™ Skinny",
-          "715™ Bootcut",
-          "721™ High Rise Skinny",
-          "724™ High Rise Straight",
-        ],
-      },
-      {
-        title: "FOOTWEAR & ACCESSORIES",
-        links: ["Slip-Ons", "Hats", "Casual Shoes", "Wallets"],
-      },
-    ],
-    image: "/women-denim-fashion.jpg",
-  },
-  {
-    label: "NEW ARRIVALS",
-    href: "#",
-    type: "simple",
-    sublinks: [
-      { label: "EASY IN LEVI'S LOOSE FITS", href: "#" },
-      { label: "MEN", href: "#" },
-      { label: "WOMEN", href: "#" },
-      { label: "ONLINE EXCLUSIVE", href: "#" },
-    ],
-  },
-  {
-    label: "FEATURED COLLECTIONS",
-    href: "#",
-    type: "simple",
-    sublinks: [
-      { label: "WINTER EDITS", href: "#" },
-      { label: "PREMIUM COLLECTION", href: "#" },
-      { label: "PERFORMANCE ESSENTIALS", href: "#" },
-      { label: "EASY IN LEVIS", href: "#" },
-    ],
-  },
-];
+import { MENUITEMS } from "@/app/admin/_constants/nav-links";
 
 type NavbarProps = {
   initialCartCount?: number;
@@ -509,7 +334,7 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
         </div>
 
         <div className="order-3 hidden w-full lg:order-2 lg:flex lg:flex-1 lg:items-center lg:justify-center lg:gap-8">
-          {menuItems.map((item) => (
+          {MENUITEMS.map((item) => (
             <div
               key={item.label}
               className="relative"
@@ -672,7 +497,7 @@ export const Navbar = ({ initialCartCount, initialWishlistCount }: NavbarProps) 
       {isMenuOpen && isMobile ? (
         <div className="fixed inset-0 top-21 z-40 overflow-y-auto border-t border-gray-200 bg-white lg:hidden">
           <div className="space-y-1 px-4 py-4">
-            {menuItems.map((item) => (
+            {MENUITEMS.map((item) => (
               <div key={item.label}>
                 <Link
                   href={item.href}

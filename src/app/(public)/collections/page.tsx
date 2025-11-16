@@ -1,24 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getStorefrontCategories } from "@/lib/storefront/catalog";
+import { getStorefrontCollections } from "@/lib/storefront/catalog";
 import { formatNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Layers3 } from "lucide-react";
 
 export const revalidate = 60;
 
-const CategoryLandingPage = async () => {
-  const categories = await getStorefrontCategories();
+const CollectionsLandingPage = async () => {
+  const collections = await getStorefrontCollections();
 
-  const rootCategories = categories.filter((category) => !category.parent);
-  const nestedCategories = categories.filter((category) => category.parent);
+  const rootCollections = collections.filter((collection) => !collection.parent);
+  const nestedCollections = collections.filter((collection) => collection.parent);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-0">
       <header className="flex flex-col gap-6 border-b border-slate-200 pb-12">
         <div className="flex items-center gap-2 text-sm uppercase tracking-[0.4em] text-slate-400">
           <Layers3 className="h-4 w-4" />
-          <span>Shop by category</span>
+          <span>Shop by collection</span>
         </div>
         <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr]">
           <div>
@@ -26,7 +26,7 @@ const CategoryLandingPage = async () => {
               Find your next wardrobe icon
             </h1>
             <p className="mt-4 max-w-2xl text-base text-slate-600">
-              Explore our edit of wardrobe staples and seasonal standouts. Every category is curated by
+              Explore our edit of wardrobe staples and seasonal standouts. Every collection is curated by
               the Hub Fashiion team to make styling effortless.
             </p>
           </div>
@@ -49,20 +49,20 @@ const CategoryLandingPage = async () => {
 
       <section className="mt-12 space-y-12">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {rootCategories.map((category) => {
-            const image = category.image;
+          {rootCollections.map((collection) => {
+            const image = collection.image;
 
             return (
               <Link
-                key={category.id}
-                href={`/category/${category.slug}`}
+                key={collection.id}
+                href={`/collections/${collection.slug}`}
                 className="group relative flex aspect-3/4 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative h-full w-full flex-1 overflow-hidden">
                   {image ? (
                     <Image
                       src={image.url}
-                      alt={category.name}
+                      alt={collection.name}
                       fill
                       sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 28vw"
                       className="object-cover transition duration-700 group-hover:scale-105"
@@ -70,7 +70,7 @@ const CategoryLandingPage = async () => {
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-slate-200 via-slate-100 to-slate-300">
                       <span className="text-lg font-semibold uppercase tracking-[0.4em] text-slate-500">
-                        {category.name}
+                        {collection.name}
                       </span>
                     </div>
                   )}
@@ -79,10 +79,10 @@ const CategoryLandingPage = async () => {
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-6 text-white">
-                  <h2 className="text-2xl font-semibold uppercase tracking-[0.3em]">{category.name}</h2>
-                  {typeof category.productCount === "number" ? (
+                  <h2 className="text-2xl font-semibold uppercase tracking-[0.3em]">{collection.name}</h2>
+                  {typeof collection.productCount === "number" ? (
                     <p className="text-sm uppercase tracking-[0.4em] text-white/70">
-                      {formatNumber(category.productCount)} styles
+                      {formatNumber(collection.productCount)} styles
                     </p>
                   ) : null}
                 </div>
@@ -90,45 +90,45 @@ const CategoryLandingPage = async () => {
             );
           })}
 
-          {rootCategories.length === 0 ? (
+          {rootCollections.length === 0 ? (
             <div className="col-span-full rounded-3xl border border-dashed border-slate-300 bg-slate-50/60 p-12 text-center text-slate-500">
-              No categories available yet. Check back soon for fresh drops.
+              No collections available yet. Check back soon for fresh drops.
             </div>
           ) : null}
         </div>
 
-        {nestedCategories.length ? (
+        {nestedCollections.length ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold uppercase tracking-[0.4em] text-slate-500">
                 Sub-collections
               </h3>
               <span className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                {formatNumber(nestedCategories.length)} categories
+                {formatNumber(nestedCollections.length)} collections
               </span>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {nestedCategories.map((category) => (
+              {nestedCollections.map((collection) => (
                 <Link
-                  key={category.id}
-                  href={`/category/${category.slug}`}
+                  key={collection.id}
+                  href={`/collections/${collection.slug}`}
                   className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                        {category.parent?.name ?? "Collection"}
+                        {collection.parent?.name ?? "Collection"}
                       </p>
-                      <h4 className="text-lg font-semibold text-slate-900">{category.name}</h4>
+                      <h4 className="text-lg font-semibold text-slate-900">{collection.name}</h4>
                     </div>
                     <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1" />
                   </div>
-                  {category.description ? (
-                    <p className="text-sm text-slate-500 line-clamp-2">{category.description}</p>
+                  {collection.description ? (
+                    <p className="text-sm text-slate-500 line-clamp-2">{collection.description}</p>
                   ) : null}
-                  {typeof category.productCount === "number" ? (
+                  {typeof collection.productCount === "number" ? (
                     <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
-                      {formatNumber(category.productCount)} styles
+                      {formatNumber(collection.productCount)} styles
                     </p>
                   ) : null}
                 </Link>
@@ -141,4 +141,4 @@ const CategoryLandingPage = async () => {
   );
 };
 
-export default CategoryLandingPage;
+export default CollectionsLandingPage;

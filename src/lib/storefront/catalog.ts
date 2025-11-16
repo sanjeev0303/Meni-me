@@ -6,7 +6,7 @@ type StorefrontImage = {
   fileId: string | null;
 };
 
-type StorefrontCategory = {
+type StorefrontCollection = {
   id: string;
   name: string;
   slug: string;
@@ -30,7 +30,7 @@ type StorefrontProduct = {
   media: StorefrontImage[];
   sku: string | null;
   stock: number;
-  categories: StorefrontCategory[];
+  collections: StorefrontCollection[];
   createdAt: Date;
   averageRating: number | null;
   reviewCount: number;
@@ -49,7 +49,7 @@ type StorefrontReview = {
   } | null;
 };
 
-type RawCategoryBase = {
+type RawCollectionBase = {
   id: string;
   name: string;
   slug: string;
@@ -78,8 +78,8 @@ type RawProductBase = {
   sku: string | null;
   stock: number;
   createdAt: Date;
-  categories: Array<{
-    category: RawCategoryBase;
+  collections: Array<{
+    collection: RawCollectionBase;
   }>;
 };
 
@@ -99,21 +99,21 @@ const mapImage = (url: string | null, fileId: string | null): StorefrontImage | 
   } satisfies StorefrontImage;
 };
 
-const mapCategoryFromRaw = (
-  category: RawCategoryBase,
+const mapCollectionFromRaw = (
+  collection: RawCollectionBase,
   overrides: { productCount?: number } = {},
-): StorefrontCategory => {
-  const productCount = overrides.productCount ?? category._count?.products;
+): StorefrontCollection => {
+  const productCount = overrides.productCount ?? collection._count?.products;
 
   return {
-    id: category.id,
-    name: category.name,
-    slug: category.slug,
-    description: category.description ?? null,
-    image: mapImage(category.imageUrl, category.imageFileId),
-    parent: category.parent ?? null,
+    id: collection.id,
+    name: collection.name,
+    slug: collection.slug,
+    description: collection.description ?? null,
+    image: mapImage(collection.imageUrl, collection.imageFileId),
+    parent: collection.parent ?? null,
     productCount: typeof productCount === "number" ? productCount : undefined,
-  } satisfies StorefrontCategory;
+  } satisfies StorefrontCollection;
 };
 
 const mapProductFromRaw = (product: RawProductBase, rating?: ProductRatingSummary): StorefrontProduct => {
@@ -130,10 +130,10 @@ const mapProductFromRaw = (product: RawProductBase, rating?: ProductRatingSummar
     })),
     sku: product.sku ?? null,
     stock: product.stock,
-    categories: product.categories.map(({ category }) =>
-      mapCategoryFromRaw({
-        ...category,
-        parent: category.parent ?? null,
+    collections: product.collections.map(({ collection }) =>
+      mapCollectionFromRaw({
+        ...collection,
+        parent: collection.parent ?? null,
       }),
     ),
     createdAt: product.createdAt,
@@ -185,8 +185,8 @@ const buildRatingSummaryMap = async (
   }, {});
 };
 
-export const getStorefrontCategories = async (): Promise<StorefrontCategory[]> => {
-  const categories = await prisma.category.findMany({
+export const getStorefrontCollections = async (): Promise<StorefrontCollection[]> => {
+  const collections = await prisma.collection.findMany({
     where: { isPublished: true },
     select: {
       id: true,
@@ -211,13 +211,13 @@ export const getStorefrontCategories = async (): Promise<StorefrontCategory[]> =
     orderBy: { name: "asc" },
   });
 
-  return categories.map((category) =>
-    mapCategoryFromRaw(category, { productCount: category._count?.products }),
+  return collections.map((collection) =>
+    mapCollectionFromRaw(collection, { productCount: collection._count?.products }),
   );
 };
 
-export const getCategoryWithProductsBySlug = async (slug: string) => {
-  const category = await prisma.category.findUnique({
+export const getCollectionWithProductsBySlug = async (slug: string) => {
+  const collection = await prisma.collection.findUnique({
     where: { slug, isPublished: true },
     select: {
       id: true,
@@ -266,10 +266,10 @@ export const getCategoryWithProductsBySlug = async (slug: string) => {
               sku: true,
               stock: true,
               createdAt: true,
-              categories: {
-                where: { category: { isPublished: true } },
+              collections: {
+                where: { collection: { isPublished: true } },
                 select: {
-                  category: {
+                  collection: {
                     select: {
                       id: true,
                       name: true,
@@ -293,57 +293,57 @@ export const getCategoryWithProductsBySlug = async (slug: string) => {
     },
   });
 
-  if (!category) {
+  if (!collection) {
     return null;
   }
 
-  const parentSummary = category.parent
+  const parentSummary = collection.parent
     ? {
-        id: category.parent.id,
-        name: category.parent.name,
-        slug: category.parent.slug,
+        id: collection.parent.id,
+        name: collection.parent.name,
+        slug: collection.parent.slug,
       }
     : null;
 
-  const baseCategory = mapCategoryFromRaw(
+  const baseCollection = mapCollectionFromRaw(
     {
-      id: category.id,
-      name: category.name,
-      slug: category.slug,
-      description: category.description,
-      imageUrl: category.imageUrl,
-      imageFileId: category.imageFileId,
+      id: collection.id,
+      name: collection.name,
+      slug: collection.slug,
+      description: collection.description,
+      imageUrl: collection.imageUrl,
+      imageFileId: collection.imageFileId,
       parent: parentSummary,
       _count: {
-        products: category.products.length,
+        products: collection.products.length,
       },
     },
-    { productCount: category.products.length },
+    { productCount: collection.products.length },
   );
 
-  const children = category.children.map((child) =>
-    mapCategoryFromRaw(
+  const children = collection.children.map((child) =>
+    mapCollectionFromRaw(
       {
         ...child,
         parent: {
-          id: category.id,
-          name: category.name,
-          slug: category.slug,
+          id: collection.id,
+          name: collection.name,
+          slug: collection.slug,
         },
       },
       { productCount: child._count?.products },
     ),
   );
 
-  const categoryProductIds = category.products.map((pivot) => pivot.product.id);
-  const ratingSummaryMap = await buildRatingSummaryMap(categoryProductIds);
+  const collectionProductIds = collection.products.map((pivot) => pivot.product.id);
+  const ratingSummaryMap = await buildRatingSummaryMap(collectionProductIds);
 
-  const products = category.products.map((pivot) =>
+  const products = collection.products.map((pivot) =>
     mapProductFromRaw(pivot.product, ratingSummaryMap[pivot.product.id]),
   );
 
   return {
-    category: baseCategory,
+    collection: baseCollection,
     children,
     products,
   };
@@ -371,10 +371,10 @@ export const getStorefrontProductBySlug = async (slug: string) => {
         sku: true,
         stock: true,
         createdAt: true,
-        categories: {
-          where: { category: { isPublished: true } },
+        collections: {
+          where: { collection: { isPublished: true } },
           select: {
-            category: {
+            collection: {
               select: {
                 id: true,
                 name: true,
@@ -494,10 +494,10 @@ export const getFeaturedProducts = async ({ limit = 8 }: { limit?: number } = {}
       sku: true,
       stock: true,
       createdAt: true,
-      categories: {
-        where: { category: { isPublished: true } },
+      collections: {
+        where: { collection: { isPublished: true } },
         select: {
-          category: {
+          collection: {
             select: {
               id: true,
               name: true,
@@ -518,4 +518,4 @@ export const getFeaturedProducts = async ({ limit = 8 }: { limit?: number } = {}
   return products.map((product) => mapProductFromRaw(product, ratingSummaryMap[product.id]));
 };
 
-export type { StorefrontCategory, StorefrontProduct, StorefrontImage, StorefrontReview };
+export type { StorefrontCollection, StorefrontProduct, StorefrontImage, StorefrontReview };

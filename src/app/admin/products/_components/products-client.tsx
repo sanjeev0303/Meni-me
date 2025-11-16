@@ -36,7 +36,7 @@ const productFormSchema = z.object({
   stock: z.coerce.number().int().min(0),
   media: z.array(mediaItemSchema).default([]),
   isPublished: z.boolean().default(true),
-  categoryIds: z.array(z.string()).default([]),
+  collectionIds: z.array(z.string()).default([]),
 });
 
 const fetcher = async <T,>(url: string): Promise<T> => {
@@ -69,17 +69,17 @@ type ProductResponse = {
   mediaUrls: string[];
   mediaFileIds?: string[];
   isPublished: boolean;
-  categories: { id: string; name: string; slug: string }[];
+  collections: { id: string; name: string; slug: string }[];
   createdAt: string;
 };
 
-type CategoryResponse = {
+type CollectionResponse = {
   id: string;
   name: string;
   slug: string;
 };
 
-export type { ProductResponse, CategoryResponse };
+export type { ProductResponse, CollectionResponse };
 
 const mapProductToForm = (product: ProductResponse) => {
   const media: ImageKitUploadValue[] = product.media?.length
@@ -107,7 +107,7 @@ const mapProductToForm = (product: ProductResponse) => {
     stock: product.stock,
     media,
     isPublished: product.isPublished,
-    categoryIds: product.categories.map((category) => category.id),
+    collectionIds: product.collections.map((collection) => collection.id),
   } satisfies ProductFormValues;
 };
 
@@ -123,15 +123,15 @@ const defaultValues: ProductFormValues = {
   stock: 0,
   media: [],
   isPublished: true,
-  categoryIds: [],
+  collectionIds: [],
 };
 
 type ProductsClientProps = {
   initialProducts?: ProductResponse[];
-  initialCategories?: CategoryResponse[];
+  initialCollections?: CollectionResponse[];
 };
 
-const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientProps) => {
+const ProductsClient = ({ initialProducts, initialCollections }: ProductsClientProps) => {
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<ProductResponse | null>(null);
 
@@ -141,10 +141,10 @@ const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientPr
     initialData: initialProducts,
   });
 
-  const { data: categories = [], isFetching: categoryLoading } = useQuery({
-    queryKey: ["admin", "categories"],
-    queryFn: () => fetcher<CategoryResponse[]>("/api/admin/category"),
-    initialData: initialCategories,
+  const { data: collections = [], isFetching: collectionLoading } = useQuery({
+    queryKey: ["admin", "collections"],
+    queryFn: () => fetcher<CollectionResponse[]>("/api/admin/collections"),
+    initialData: initialCollections,
   });
 
   const form = useForm<ProductFormValues>({
@@ -252,7 +252,7 @@ const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientPr
   const productRows = useMemo(() => {
     return products.map((product) => ({
       product,
-      categoriesLabel: product.categories.map((category) => category.name).join(", "),
+      collectionsLabel: product.collections.map((collection) => collection.name).join(", "),
     }));
   }, [products]);
 
@@ -289,12 +289,12 @@ const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientPr
                 <th className="px-4 py-3">Product</th>
                 <th className="px-4 py-3">Price</th>
                 <th className="px-4 py-3">Inventory</th>
-                <th className="px-4 py-3">Categories</th>
+                <th className="px-4 py-3">Collections</th>
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {productRows.map(({ product, categoriesLabel }) => {
+              {productRows.map(({ product, collectionsLabel }) => {
                 const isSelected = selectedProduct?.id === product.id;
                 return (
                   <tr
@@ -319,7 +319,7 @@ const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientPr
                       ) : null}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-600">{product.stock} in stock</td>
-                    <td className="px-4 py-3 text-xs text-slate-500">{categoriesLabel || "—"}</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">{collectionsLabel || "—"}</td>
                     <td className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                       {product.isPublished ? "Published" : "Draft"}
                     </td>
@@ -491,43 +491,43 @@ const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientPr
 
               <FormField
                 control={form.control}
-                name="categoryIds"
+                name="collectionIds"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Categories</FormLabel>
+                    <FormLabel>Collections</FormLabel>
                     <div className="grid grid-cols-2 gap-2">
-                      {categoryLoading && categories.length === 0 ? (
-                        <p className="text-sm text-slate-500">Loading categories…</p>
+                      {collectionLoading && collections.length === 0 ? (
+                        <p className="text-sm text-slate-500">Loading collections…</p>
                       ) : null}
-                      {categories.map((category) => {
-                        const checked = field.value?.includes(category.id) ?? false;
+                      {collections.map((collection) => {
+                        const checked = field.value?.includes(collection.id) ?? false;
                         return (
                           <label
-                            key={category.id}
+                            key={collection.id}
                             className={cn(
                               "flex cursor-pointer items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm transition",
                               checked ? "bg-slate-900 text-white" : "hover:bg-slate-100",
                             )}
                           >
-                            <span>{category.name}</span>
+                            <span>{collection.name}</span>
                             <input
                               type="checkbox"
                               className="size-4 accent-slate-900"
                               checked={checked}
                               onChange={(event) => {
                                 if (event.target.checked) {
-                                  field.onChange([...(field.value ?? []), category.id]);
+                                  field.onChange([...(field.value ?? []), collection.id]);
                                 } else {
-                                  field.onChange(field.value?.filter((id) => id !== category.id));
+                                  field.onChange(field.value?.filter((id) => id !== collection.id));
                                 }
                               }}
                             />
                           </label>
                         );
                       })}
-                      {categories.length === 0 && !categoryLoading ? (
+                      {collections.length === 0 && !collectionLoading ? (
                         <p className="col-span-2 text-sm text-slate-500">
-                          No categories yet. <span className="underline">Create one in categories tab.</span>
+                          No collections yet. <span className="underline">Create one in collections tab.</span>
                         </p>
                       ) : null}
                     </div>
@@ -538,15 +538,15 @@ const ProductsClient = ({ initialProducts, initialCategories }: ProductsClientPr
 
               <FormField
                 control={form.control}
-                  name="isPublished"
+                name="isPublished"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
                     <div>
-                        <FormLabel className="text-sm font-semibold">Publish on storefront</FormLabel>
-                        <FormDescription>Toggle availability for shoppers.</FormDescription>
+                      <FormLabel className="text-sm font-semibold">Publish on storefront</FormLabel>
+                      <FormDescription>Toggle availability for shoppers.</FormDescription>
                     </div>
                     <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}

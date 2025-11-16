@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getFeaturedProducts, getStorefrontCategories } from "@/lib/storefront/catalog";
+import { getFeaturedProducts, getStorefrontCollections } from "@/lib/storefront/catalog";
 import StorefrontProductCard from "@/components/storefront/product-card";
 import { Button } from "@/components/ui/button";
 
@@ -21,9 +21,9 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 	const onSale = params.onSale === "true";
 	const gender = params.gender ?? "";
 
-	const [products, categories] = await Promise.all([
+	const [products, collections] = await Promise.all([
 		getFeaturedProducts({ limit: 24 }),
-		getStorefrontCategories(),
+		getStorefrontCollections(),
 	]);
 
 	// Filter products based on search and parameters
@@ -35,7 +35,7 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 			(p) =>
 				p.name.toLowerCase().includes(searchLower) ||
 				p.description?.toLowerCase().includes(searchLower) ||
-				p.categories.some((c) => c.name.toLowerCase().includes(searchLower))
+				p.collections.some((c) => c.name.toLowerCase().includes(searchLower))
 		);
 	}
 
@@ -50,12 +50,12 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 	if (gender.trim().length > 0) {
 		const genderLower = gender.toLowerCase();
 		filteredProducts = filteredProducts.filter((p) =>
-			p.categories.some((c) => c.name.toLowerCase().includes(genderLower))
+			p.collections.some((c) => c.name.toLowerCase().includes(genderLower))
 		);
 	}
 
 	const hasProducts = filteredProducts.length > 0;
-	const featuredCategories = categories.filter((category) => !category.parent).slice(0, 6);
+	const featuredCollections = collections.filter((collection) => !collection.parent).slice(0, 6);
 
 	return (
 		<div className="flex min-h-screen flex-col bg-white">
@@ -73,7 +73,7 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 						</div>
 						<div className="flex gap-3">
 							<Button asChild variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white hover:text-slate-900">
-								<Link href="/category">Shop by category</Link>
+								<Link href="/collections">Shop by collection</Link>
 							</Button>
 							<Button asChild className="bg-white text-slate-900 hover:bg-slate-100">
 								<Link href="#catalog">Browse catalog</Link>
@@ -81,15 +81,15 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 						</div>
 					</div>
 
-					{featuredCategories.length ? (
+					{featuredCollections.length ? (
 						<div className="flex flex-wrap items-center gap-3">
-							{featuredCategories.map((category) => (
+							{featuredCollections.map((collection) => (
 								<Link
-									key={category.id}
-									href={`/category/${category.slug}`}
+									key={collection.id}
+									href={`/collections/${collection.slug}`}
 									className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white transition hover:border-white hover:bg-white hover:text-slate-900"
 								>
-									{category.name}
+									{collection.name}
 								</Link>
 							))}
 						</div>

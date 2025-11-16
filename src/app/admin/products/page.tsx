@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getInternalApiUrl } from "@/lib/internal-api";
 import ProductsClient, {
-  type CategoryResponse,
+  type CollectionResponse,
   type ProductResponse,
 } from "./_components/products-client";
 
@@ -31,9 +31,9 @@ async function getProducts(): Promise<ProductResponse[]> {
   }
 }
 
-async function getCategories(): Promise<CategoryResponse[]> {
+async function getCollections(): Promise<CollectionResponse[]> {
   try {
-    const res = await fetch(getInternalApiUrl("/api/admin/category"), {
+    const res = await fetch(getInternalApiUrl("/api/admin/collections"), {
       cache: "no-store",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -45,13 +45,13 @@ async function getCategories(): Promise<CategoryResponse[]> {
 
     return res.json();
   } catch (error) {
-    console.error("[ADMIN_CATEGORIES_PAGE]", error);
+    console.error("[ADMIN_COLLECTIONS_PAGE]", error);
     return [];
   }
 }
 
 const ProductsPage = async () => {
-  const [products, categories] = await Promise.all([getProducts(), getCategories()]);
+  const [products, collections] = await Promise.all([getProducts(), getCollections()]);
 
   return (
     <div className="space-y-8">
@@ -59,7 +59,7 @@ const ProductsPage = async () => {
         <h1 className="text-2xl font-semibold text-slate-900">Products</h1>
         <p className="text-sm text-slate-500">Manage your product catalog, pricing, and availability.</p>
       </div>
-      <ProductsClient initialProducts={products} initialCategories={categories} />
+      <ProductsClient initialProducts={products} initialCollections={collections} />
     </div>
   );
 };

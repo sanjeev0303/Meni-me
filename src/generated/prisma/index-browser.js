@@ -187,7 +187,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.CategoryScalarFieldEnum = {
+exports.Prisma.CollectionScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
@@ -200,9 +200,9 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ProductCategoryScalarFieldEnum = {
+exports.Prisma.ProductCollectionScalarFieldEnum = {
   productId: 'productId',
-  categoryId: 'categoryId',
+  collectionId: 'collectionId',
   assignedAt: 'assignedAt'
 };
 
@@ -344,8 +344,8 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Product: 'Product',
-  Category: 'Category',
-  ProductCategory: 'ProductCategory',
+  Collection: 'Collection',
+  ProductCollection: 'ProductCollection',
   Review: 'Review',
   Order: 'Order',
   OrderItem: 'OrderItem',

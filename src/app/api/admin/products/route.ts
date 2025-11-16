@@ -25,7 +25,7 @@ const baseProductInputSchema = z.object({
   mediaUrls: z.array(z.string().url()).optional(),
   mediaFileIds: z.array(z.string().min(1)).optional(),
   isPublished: z.boolean().default(true),
-  categoryIds: z.array(z.string().min(1)).default([]),
+  collectionIds: z.array(z.string().min(1)).default([]),
 });
 
 const toDecimal = (value: unknown) => {
@@ -51,9 +51,9 @@ export async function GET() {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: "desc" },
       include: {
-        categories: {
+        collections: {
           include: {
-            category: true,
+            collection: true,
           },
         },
       },
@@ -67,7 +67,7 @@ export async function GET() {
         url,
         fileId: product.mediaFileIds[index] ?? "",
       })),
-      categories: product.categories.map((pivot) => pivot.category),
+      collections: product.collections.map((pivot) => pivot.collection),
     }));
 
     return NextResponse.json(serialised);
@@ -101,18 +101,18 @@ export async function POST(request: Request) {
   mediaUrls: media.map((item) => item.url),
   mediaFileIds: media.map((item) => item.fileId ?? ""),
         isPublished: payload.isPublished,
-        categories: {
-          create: payload.categoryIds.map((categoryId) => ({
-            category: {
-              connect: { id: categoryId },
+        collections: {
+          create: payload.collectionIds.map((collectionId) => ({
+            collection: {
+              connect: { id: collectionId },
             },
           })),
         },
       },
       include: {
-        categories: {
+        collections: {
           include: {
-            category: true,
+            collection: true,
           },
         },
       },
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
           url,
           fileId: product.mediaFileIds[index] ?? "",
         })),
-        categories: product.categories.map((pivot) => pivot.category),
+        collections: product.collections.map((pivot) => pivot.collection),
       },
       { status: 201 },
     );

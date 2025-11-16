@@ -16,9 +16,9 @@ const getPrimaryImage = (product: StorefrontProduct) => {
     return product.media[0];
   }
 
-  const categoryWithImage = product.categories.find((category) => category.image !== null);
+  const collectionWithImage = product.collections.find((collection) => collection.image !== null);
 
-  return categoryWithImage?.image ?? null;
+  return collectionWithImage?.image ?? null;
 };
 
 type StorefrontProductCardProps = {
@@ -113,9 +113,9 @@ const StorefrontProductCard = ({ product, className }: StorefrontProductCardProp
           <Link href={`/products/${product.slug}`} className="text-lg font-semibold text-slate-900">
             {product.name}
           </Link>
-          {product.categories.length ? (
+          {product.collections.length ? (
             <p className="mt-1 text-xs uppercase tracking-[0.3em] text-slate-400">
-              {product.categories.map((category) => category.name).join(" · ")}
+              {product.collections.map((collection) => collection.name).join(" · ")}
             </p>
           ) : null}
           {product.reviewCount > 0 ? (

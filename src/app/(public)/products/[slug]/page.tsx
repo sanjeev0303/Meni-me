@@ -54,12 +54,12 @@ const getRelatedProducts = async (product: StorefrontProduct) => {
   const related = await getFeaturedProducts({ limit: 8 });
   const filtered = related.filter((item) => item.id !== product.id);
 
-  const categories = new Set(product.categories.map((category) => category.id));
+  const collections = new Set(product.collections.map((collection) => collection.id));
 
   const prioritized = filtered
     .sort((a, b) => {
-      const aMatches = a.categories.some((category) => categories.has(category.id));
-      const bMatches = b.categories.some((category) => categories.has(category.id));
+      const aMatches = a.collections.some((collection) => collections.has(collection.id));
+      const bMatches = b.collections.some((collection) => collections.has(collection.id));
 
       if (aMatches === bMatches) {
         return 0;
@@ -154,15 +154,15 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
               <p className="max-w-xl text-base text-slate-600">{description}</p>
 
-              {product.categories.length ? (
+              {product.collections.length ? (
                 <div className="flex flex-wrap gap-3">
-                  {product.categories.map((category) => (
+                  {product.collections.map((collection) => (
                     <Link
-                      key={category.id}
-                      href={`/category/${category.slug}`}
+                      key={collection.id}
+                      href={`/collections/${collection.slug}`}
                       className="rounded-full border border-slate-200 px-4 py-2 text-xs font-medium uppercase tracking-[0.3em] text-slate-600 transition hover:border-slate-900 hover:text-slate-900"
                     >
-                      {category.name}
+                      {collection.name}
                     </Link>
                   ))}
                 </div>

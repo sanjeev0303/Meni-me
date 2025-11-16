@@ -79,20 +79,20 @@ model Verification {
 }
 
 model Product {
-  id             String            @id @default(cuid())
+  id             String              @id @default(cuid())
   name           String
-  slug           String            @unique
+  slug           String              @unique
   description    String?
   sku            String?
-  price          Decimal           @db.Decimal(10, 2)
-  compareAtPrice Decimal?          @db.Decimal(10, 2)
-  stock          Int               @default(0)
-  mediaUrls      String[]          @default([])
-  mediaFileIds   String[]          @default([])
-  isPublished    Boolean           @default(true)
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @default(now()) @updatedAt
-  categories     ProductCategory[]
+  price          Decimal             @db.Decimal(10, 2)
+  compareAtPrice Decimal?            @db.Decimal(10, 2)
+  stock          Int                 @default(0)
+  mediaUrls      String[]            @default([])
+  mediaFileIds   String[]            @default([])
+  isPublished    Boolean             @default(true)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now()) @updatedAt
+  collections    ProductCollection[]
   reviews        Review[]
   orderItems     OrderItem[]
   cartItems      CartItem[]
@@ -101,33 +101,33 @@ model Product {
   @@map("product")
 }
 
-model Category {
-  id          String            @id @default(cuid())
+model Collection {
+  id          String              @id @default(cuid())
   name        String
-  slug        String            @unique
+  slug        String              @unique
   description String?
   parentId    String?
-  parent      Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children    Category[]        @relation("CategoryHierarchy")
-  products    ProductCategory[]
-  isPublished Boolean           @default(true)
+  parent      Collection?         @relation("CollectionHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Collection[]        @relation("CollectionHierarchy")
+  products    ProductCollection[]
+  isPublished Boolean             @default(true)
   imageUrl    String?
   imageFileId String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @default(now()) @updatedAt
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @default(now()) @updatedAt
 
-  @@map("category")
+  @@map("collection")
 }
 
-model ProductCategory {
-  productId  String
-  categoryId String
-  assignedAt DateTime @default(now())
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+model ProductCollection {
+  productId    String
+  collectionId String     @map("collectionId")
+  assignedAt   DateTime   @default(now())
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@id([productId, categoryId])
-  @@map("product_category")
+  @@id([productId, collectionId])
+  @@map("product_collection")
 }
 
 model Review {
