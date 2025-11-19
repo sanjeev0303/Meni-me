@@ -1,27 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { FilterChips } from "@/components/collections/filter-chips";
 import { FilterPanel } from "@/components/collections/filter-panel";
 import { ProductGrid, type CollectionGridProduct } from "@/components/collections/product-grid";
-import { FilterChips } from "@/components/collections/filter-chips";
+import { ProductGridSkeleton } from "@/components/collections/product-grid-skeleton";
 import { SortDropdown } from "@/components/collections/sort-dropdown";
-import { Settings2, Sliders, X } from "lucide-react";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import type { StorefrontCollection } from "@/lib/storefront/catalog";
+import { Settings2, Sliders, X } from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
 
 const FALLBACK_FEATURED_CATEGORIES = ["JEANS", "T-SHIRTS", "JACKETS", "SHIRTS", "SWEATSHIRT"];
-const FALLBACK_ALL_CATEGORIES = [
-  "JEANS",
-  "T-SHIRTS",
-  "JACKETS",
-  "SHIRTS",
-  "SWEATSHIRT",
-  "COATS",
-  "BELTS",
-  "BAGS",
-  "CARGOS",
-  "CHINOS",
-];
+// const FALLBACK_ALL_CATEGORIES = [
+//   "JEANS",
+//   "T-SHIRTS",
+//   "JACKETS",
+//   "SHIRTS",
+//   "SWEATSHIRT",
+//   "COATS",
+//   "BELTS",
+//   "BAGS",
+//   "CARGOS",
+//   "CHINOS",
+// ];
 
 type Filters = {
   category: string[];
@@ -53,21 +54,21 @@ const formatCategory = (value: string) => value.trim().toUpperCase();
 
 export function CollectionPageClient({ collection, childrenCollections, products }: CollectionPageClientProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isMoreCategoriesOpen, setIsMoreCategoriesOpen] = useState(false);
   const [sortBy, setSortBy] = useState("featured");
   const [filters, setFilters] = useState<Filters>(createDefaultFilters);
+  const [isPending, startTransition] = useTransition();
 
   const derivedCategories = childrenCollections.length
     ? childrenCollections.map((child) => formatCategory(child.name))
     : FALLBACK_FEATURED_CATEGORIES;
 
-  const allCategories = Array.from(
-    new Set([
-      ...derivedCategories,
-      ...childrenCollections.map((child) => formatCategory(child.name)),
-      ...FALLBACK_ALL_CATEGORIES,
-    ]),
-  );
+//   const allCategories = Array.from(
+//     new Set([
+//       ...derivedCategories,
+//       ...childrenCollections.map((child) => formatCategory(child.name)),
+//       ...FALLBACK_ALL_CATEGORIES,
+//     ]),
+//   );
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -109,26 +110,36 @@ export function CollectionPageClient({ collection, childrenCollections, products
     }
   }, [filteredProducts, sortBy]);
 
-  const hasActiveFilters = Object.values(filters).some((value) =>
-    Array.isArray(value) ? value.length > 0 : false,
-  );
+//   const hasActiveFilters = Object.values(filters).some((value) =>
+//     Array.isArray(value) ? value.length > 0 : false,
+//   );
 
   const handleClearFilters = () => {
-    setFilters(createDefaultFilters());
+    startTransition(() => {
+      setFilters(createDefaultFilters());
+    });
   };
 
   const handleApplyFilters = () => {
     setIsFilterOpen(false);
   };
 
+  const handleSortChange = (newSortBy: string) => {
+    startTransition(() => {
+      setSortBy(newSortBy);
+    });
+  };
+
   const handleCategoryToggle = (category: string) => {
     const normalized = formatCategory(category);
-    setFilters((prev) => ({
-      ...prev,
-      category: prev.category.includes(normalized)
-        ? prev.category.filter((cat) => cat !== normalized)
-        : [...prev.category, normalized],
-    }));
+    startTransition(() => {
+      setFilters((prev) => ({
+        ...prev,
+        category: prev.category.includes(normalized)
+          ? prev.category.filter((cat) => cat !== normalized)
+          : [...prev.category, normalized],
+      }));
+    });
   };
 
   const heroTitle = formatCategory(collection.name);
@@ -153,7 +164,7 @@ export function CollectionPageClient({ collection, childrenCollections, products
             </div>
 
             <div className="hidden lg:flex items-center gap-4">
-              <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
+              <SortDropdown sortBy={sortBy} setSortBy={handleSortChange} />
             </div>
           </div>
         </div>
@@ -222,7 +233,14 @@ export function CollectionPageClient({ collection, childrenCollections, products
             </div>
 
             <div className="px-4 md:px-6 lg:px-0 py-8">
-              <ProductGrid products={sortedProducts} />
+              {isPending ? (
+                <ProductGridSkeleton />
+              ) : (
+                <ProductGrid
+                  products={sortedProducts}
+                  collectionName={collection.name}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -261,7 +279,7 @@ export function CollectionPageClient({ collection, childrenCollections, products
                   <SheetClose asChild key={option.value}>
                     <button
                       type="button"
-                      onClick={() => setSortBy(option.value)}
+                      onClick={() => handleSortChange(option.value)}
                       className={`flex items-center justify-between py-3 text-sm font-semibold uppercase tracking-[0.2em] transition ${
                         sortBy === option.value ? "text-red-600" : "text-gray-900 hover:text-red-600"
                       }`}

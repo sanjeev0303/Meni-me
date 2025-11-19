@@ -216,7 +216,7 @@ export default function Footer() {
           {/* Newsletter Section */}
           <div>
             <h3 className="text-sm font-bold text-black mb-2 uppercase tracking-wide">
-              It's All About The Perks
+              It&apos;s All About The Perks
             </h3>
             <form className="lg:space-y-4 md:space-y-2">
               <input
@@ -243,7 +243,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-xs text-gray-600 text-center md:text-left">
             <p>
-              © 2025, Levi's India Store
+              © 2025, Levi&apos;s India Store
               {' '}
               <a href="#" className="hover:text-black underline mx-2">Privacy Policy</a>
               <a href="#" className="hover:text-black underline mx-2">Terms of use</a>

@@ -89,6 +89,8 @@ model Product {
   stock          Int                 @default(0)
   mediaUrls      String[]            @default([])
   mediaFileIds   String[]            @default([])
+  sizeOptions    String[]            @default([])
+  colorOptions   String[]            @default([])
   isPublished    Boolean             @default(true)
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @default(now()) @updatedAt
@@ -180,11 +182,13 @@ model OrderItem {
   lineTotal   Decimal @db.Decimal(10, 2)
   productName String
   productSku  String?
+  selectedSize  String?
+  selectedColor String?
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
-  @@unique([orderId, productId])
+  @@unique([orderId, productId, selectedSize, selectedColor])
   @@map("order_item")
 }
 
@@ -206,11 +210,13 @@ model CartItem {
   productId String
   quantity  Int      @default(1)
   addedAt   DateTime @default(now())
+  selectedSize  String?
+  selectedColor String?
 
   cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
-  @@unique([cartId, productId])
+  @@unique([cartId, productId, selectedSize, selectedColor])
   @@map("cart_item")
 }
 
@@ -231,11 +237,13 @@ model WishlistItem {
   wishlistId String
   productId  String
   addedAt    DateTime @default(now())
+  selectedSize  String?
+  selectedColor String?
 
   wishlist Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
   product  Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
 
-  @@unique([wishlistId, productId])
+  @@unique([wishlistId, productId, selectedSize, selectedColor])
   @@map("wishlist_item")
 }
 

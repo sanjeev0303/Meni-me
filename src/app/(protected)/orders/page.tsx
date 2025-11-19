@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { UserOrderData } from '@/server/order-service';
+import type { UserOrderData } from '@/server/order-service';
 import { Button } from '@/components/ui/button';
 import { OrderCard } from './_components/order-card';
 

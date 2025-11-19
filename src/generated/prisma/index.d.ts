@@ -7121,6 +7121,8 @@ export namespace Prisma {
     stock: number
     mediaUrls: number
     mediaFileIds: number
+    sizeOptions: number
+    colorOptions: number
     isPublished: number
     createdAt: number
     updatedAt: number
@@ -7179,6 +7181,8 @@ export namespace Prisma {
     stock?: true
     mediaUrls?: true
     mediaFileIds?: true
+    sizeOptions?: true
+    colorOptions?: true
     isPublished?: true
     createdAt?: true
     updatedAt?: true
@@ -7282,6 +7286,8 @@ export namespace Prisma {
     stock: number
     mediaUrls: string[]
     mediaFileIds: string[]
+    sizeOptions: string[]
+    colorOptions: string[]
     isPublished: boolean
     createdAt: Date
     updatedAt: Date
@@ -7317,6 +7323,8 @@ export namespace Prisma {
     stock?: boolean
     mediaUrls?: boolean
     mediaFileIds?: boolean
+    sizeOptions?: boolean
+    colorOptions?: boolean
     isPublished?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7339,6 +7347,8 @@ export namespace Prisma {
     stock?: boolean
     mediaUrls?: boolean
     mediaFileIds?: boolean
+    sizeOptions?: boolean
+    colorOptions?: boolean
     isPublished?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7355,6 +7365,8 @@ export namespace Prisma {
     stock?: boolean
     mediaUrls?: boolean
     mediaFileIds?: boolean
+    sizeOptions?: boolean
+    colorOptions?: boolean
     isPublished?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7371,12 +7383,14 @@ export namespace Prisma {
     stock?: boolean
     mediaUrls?: boolean
     mediaFileIds?: boolean
+    sizeOptions?: boolean
+    colorOptions?: boolean
     isPublished?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "sku" | "price" | "compareAtPrice" | "stock" | "mediaUrls" | "mediaFileIds" | "isPublished" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "sku" | "price" | "compareAtPrice" | "stock" | "mediaUrls" | "mediaFileIds" | "sizeOptions" | "colorOptions" | "isPublished" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     collections?: boolean | Product$collectionsArgs<ExtArgs>
     reviews?: boolean | Product$reviewsArgs<ExtArgs>
@@ -7408,6 +7422,8 @@ export namespace Prisma {
       stock: number
       mediaUrls: string[]
       mediaFileIds: string[]
+      sizeOptions: string[]
+      colorOptions: string[]
       isPublished: boolean
       createdAt: Date
       updatedAt: Date
@@ -7849,6 +7865,8 @@ export namespace Prisma {
     readonly stock: FieldRef<"Product", 'Int'>
     readonly mediaUrls: FieldRef<"Product", 'String[]'>
     readonly mediaFileIds: FieldRef<"Product", 'String[]'>
+    readonly sizeOptions: FieldRef<"Product", 'String[]'>
+    readonly colorOptions: FieldRef<"Product", 'String[]'>
     readonly isPublished: FieldRef<"Product", 'Boolean'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
@@ -13059,6 +13077,8 @@ export namespace Prisma {
     lineTotal: Decimal | null
     productName: string | null
     productSku: string | null
+    selectedSize: string | null
+    selectedColor: string | null
   }
 
   export type OrderItemMaxAggregateOutputType = {
@@ -13070,6 +13090,8 @@ export namespace Prisma {
     lineTotal: Decimal | null
     productName: string | null
     productSku: string | null
+    selectedSize: string | null
+    selectedColor: string | null
   }
 
   export type OrderItemCountAggregateOutputType = {
@@ -13081,6 +13103,8 @@ export namespace Prisma {
     lineTotal: number
     productName: number
     productSku: number
+    selectedSize: number
+    selectedColor: number
     _all: number
   }
 
@@ -13106,6 +13130,8 @@ export namespace Prisma {
     lineTotal?: true
     productName?: true
     productSku?: true
+    selectedSize?: true
+    selectedColor?: true
   }
 
   export type OrderItemMaxAggregateInputType = {
@@ -13117,6 +13143,8 @@ export namespace Prisma {
     lineTotal?: true
     productName?: true
     productSku?: true
+    selectedSize?: true
+    selectedColor?: true
   }
 
   export type OrderItemCountAggregateInputType = {
@@ -13128,6 +13156,8 @@ export namespace Prisma {
     lineTotal?: true
     productName?: true
     productSku?: true
+    selectedSize?: true
+    selectedColor?: true
     _all?: true
   }
 
@@ -13226,6 +13256,8 @@ export namespace Prisma {
     lineTotal: Decimal
     productName: string
     productSku: string | null
+    selectedSize: string | null
+    selectedColor: string | null
     _count: OrderItemCountAggregateOutputType | null
     _avg: OrderItemAvgAggregateOutputType | null
     _sum: OrderItemSumAggregateOutputType | null
@@ -13256,6 +13288,8 @@ export namespace Prisma {
     lineTotal?: boolean
     productName?: boolean
     productSku?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
@@ -13269,6 +13303,8 @@ export namespace Prisma {
     lineTotal?: boolean
     productName?: boolean
     productSku?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
@@ -13282,6 +13318,8 @@ export namespace Prisma {
     lineTotal?: boolean
     productName?: boolean
     productSku?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
@@ -13295,9 +13333,11 @@ export namespace Prisma {
     lineTotal?: boolean
     productName?: boolean
     productSku?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
   }
 
-  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderId" | "productId" | "quantity" | "unitPrice" | "lineTotal" | "productName" | "productSku", ExtArgs["result"]["orderItem"]>
+  export type OrderItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderId" | "productId" | "quantity" | "unitPrice" | "lineTotal" | "productName" | "productSku" | "selectedSize" | "selectedColor", ExtArgs["result"]["orderItem"]>
   export type OrderItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -13326,6 +13366,8 @@ export namespace Prisma {
       lineTotal: Prisma.Decimal
       productName: string
       productSku: string | null
+      selectedSize: string | null
+      selectedColor: string | null
     }, ExtArgs["result"]["orderItem"]>
     composites: {}
   }
@@ -13759,6 +13801,8 @@ export namespace Prisma {
     readonly lineTotal: FieldRef<"OrderItem", 'Decimal'>
     readonly productName: FieldRef<"OrderItem", 'String'>
     readonly productSku: FieldRef<"OrderItem", 'String'>
+    readonly selectedSize: FieldRef<"OrderItem", 'String'>
+    readonly selectedColor: FieldRef<"OrderItem", 'String'>
   }
     
 
@@ -15274,6 +15318,8 @@ export namespace Prisma {
     productId: string | null
     quantity: number | null
     addedAt: Date | null
+    selectedSize: string | null
+    selectedColor: string | null
   }
 
   export type CartItemMaxAggregateOutputType = {
@@ -15282,6 +15328,8 @@ export namespace Prisma {
     productId: string | null
     quantity: number | null
     addedAt: Date | null
+    selectedSize: string | null
+    selectedColor: string | null
   }
 
   export type CartItemCountAggregateOutputType = {
@@ -15290,6 +15338,8 @@ export namespace Prisma {
     productId: number
     quantity: number
     addedAt: number
+    selectedSize: number
+    selectedColor: number
     _all: number
   }
 
@@ -15308,6 +15358,8 @@ export namespace Prisma {
     productId?: true
     quantity?: true
     addedAt?: true
+    selectedSize?: true
+    selectedColor?: true
   }
 
   export type CartItemMaxAggregateInputType = {
@@ -15316,6 +15368,8 @@ export namespace Prisma {
     productId?: true
     quantity?: true
     addedAt?: true
+    selectedSize?: true
+    selectedColor?: true
   }
 
   export type CartItemCountAggregateInputType = {
@@ -15324,6 +15378,8 @@ export namespace Prisma {
     productId?: true
     quantity?: true
     addedAt?: true
+    selectedSize?: true
+    selectedColor?: true
     _all?: true
   }
 
@@ -15419,6 +15475,8 @@ export namespace Prisma {
     productId: string
     quantity: number
     addedAt: Date
+    selectedSize: string | null
+    selectedColor: string | null
     _count: CartItemCountAggregateOutputType | null
     _avg: CartItemAvgAggregateOutputType | null
     _sum: CartItemSumAggregateOutputType | null
@@ -15446,6 +15504,8 @@ export namespace Prisma {
     productId?: boolean
     quantity?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     cart?: boolean | CartDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cartItem"]>
@@ -15456,6 +15516,8 @@ export namespace Prisma {
     productId?: boolean
     quantity?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     cart?: boolean | CartDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cartItem"]>
@@ -15466,6 +15528,8 @@ export namespace Prisma {
     productId?: boolean
     quantity?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     cart?: boolean | CartDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cartItem"]>
@@ -15476,9 +15540,11 @@ export namespace Prisma {
     productId?: boolean
     quantity?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
   }
 
-  export type CartItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cartId" | "productId" | "quantity" | "addedAt", ExtArgs["result"]["cartItem"]>
+  export type CartItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cartId" | "productId" | "quantity" | "addedAt" | "selectedSize" | "selectedColor", ExtArgs["result"]["cartItem"]>
   export type CartItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cart?: boolean | CartDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -15504,6 +15570,8 @@ export namespace Prisma {
       productId: string
       quantity: number
       addedAt: Date
+      selectedSize: string | null
+      selectedColor: string | null
     }, ExtArgs["result"]["cartItem"]>
     composites: {}
   }
@@ -15934,6 +16002,8 @@ export namespace Prisma {
     readonly productId: FieldRef<"CartItem", 'String'>
     readonly quantity: FieldRef<"CartItem", 'Int'>
     readonly addedAt: FieldRef<"CartItem", 'DateTime'>
+    readonly selectedSize: FieldRef<"CartItem", 'String'>
+    readonly selectedColor: FieldRef<"CartItem", 'String'>
   }
     
 
@@ -17438,6 +17508,8 @@ export namespace Prisma {
     wishlistId: string | null
     productId: string | null
     addedAt: Date | null
+    selectedSize: string | null
+    selectedColor: string | null
   }
 
   export type WishlistItemMaxAggregateOutputType = {
@@ -17445,6 +17517,8 @@ export namespace Prisma {
     wishlistId: string | null
     productId: string | null
     addedAt: Date | null
+    selectedSize: string | null
+    selectedColor: string | null
   }
 
   export type WishlistItemCountAggregateOutputType = {
@@ -17452,6 +17526,8 @@ export namespace Prisma {
     wishlistId: number
     productId: number
     addedAt: number
+    selectedSize: number
+    selectedColor: number
     _all: number
   }
 
@@ -17461,6 +17537,8 @@ export namespace Prisma {
     wishlistId?: true
     productId?: true
     addedAt?: true
+    selectedSize?: true
+    selectedColor?: true
   }
 
   export type WishlistItemMaxAggregateInputType = {
@@ -17468,6 +17546,8 @@ export namespace Prisma {
     wishlistId?: true
     productId?: true
     addedAt?: true
+    selectedSize?: true
+    selectedColor?: true
   }
 
   export type WishlistItemCountAggregateInputType = {
@@ -17475,6 +17555,8 @@ export namespace Prisma {
     wishlistId?: true
     productId?: true
     addedAt?: true
+    selectedSize?: true
+    selectedColor?: true
     _all?: true
   }
 
@@ -17555,6 +17637,8 @@ export namespace Prisma {
     wishlistId: string
     productId: string
     addedAt: Date
+    selectedSize: string | null
+    selectedColor: string | null
     _count: WishlistItemCountAggregateOutputType | null
     _min: WishlistItemMinAggregateOutputType | null
     _max: WishlistItemMaxAggregateOutputType | null
@@ -17579,6 +17663,8 @@ export namespace Prisma {
     wishlistId?: boolean
     productId?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wishlistItem"]>
@@ -17588,6 +17674,8 @@ export namespace Prisma {
     wishlistId?: boolean
     productId?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wishlistItem"]>
@@ -17597,6 +17685,8 @@ export namespace Prisma {
     wishlistId?: boolean
     productId?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
     wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wishlistItem"]>
@@ -17606,9 +17696,11 @@ export namespace Prisma {
     wishlistId?: boolean
     productId?: boolean
     addedAt?: boolean
+    selectedSize?: boolean
+    selectedColor?: boolean
   }
 
-  export type WishlistItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "wishlistId" | "productId" | "addedAt", ExtArgs["result"]["wishlistItem"]>
+  export type WishlistItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "wishlistId" | "productId" | "addedAt" | "selectedSize" | "selectedColor", ExtArgs["result"]["wishlistItem"]>
   export type WishlistItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -17633,6 +17725,8 @@ export namespace Prisma {
       wishlistId: string
       productId: string
       addedAt: Date
+      selectedSize: string | null
+      selectedColor: string | null
     }, ExtArgs["result"]["wishlistItem"]>
     composites: {}
   }
@@ -18062,6 +18156,8 @@ export namespace Prisma {
     readonly wishlistId: FieldRef<"WishlistItem", 'String'>
     readonly productId: FieldRef<"WishlistItem", 'String'>
     readonly addedAt: FieldRef<"WishlistItem", 'DateTime'>
+    readonly selectedSize: FieldRef<"WishlistItem", 'String'>
+    readonly selectedColor: FieldRef<"WishlistItem", 'String'>
   }
     
 
@@ -19748,6 +19844,8 @@ export namespace Prisma {
     stock: 'stock',
     mediaUrls: 'mediaUrls',
     mediaFileIds: 'mediaFileIds',
+    sizeOptions: 'sizeOptions',
+    colorOptions: 'colorOptions',
     isPublished: 'isPublished',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -19825,7 +19923,9 @@ export namespace Prisma {
     unitPrice: 'unitPrice',
     lineTotal: 'lineTotal',
     productName: 'productName',
-    productSku: 'productSku'
+    productSku: 'productSku',
+    selectedSize: 'selectedSize',
+    selectedColor: 'selectedColor'
   };
 
   export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
@@ -19846,7 +19946,9 @@ export namespace Prisma {
     cartId: 'cartId',
     productId: 'productId',
     quantity: 'quantity',
-    addedAt: 'addedAt'
+    addedAt: 'addedAt',
+    selectedSize: 'selectedSize',
+    selectedColor: 'selectedColor'
   };
 
   export type CartItemScalarFieldEnum = (typeof CartItemScalarFieldEnum)[keyof typeof CartItemScalarFieldEnum]
@@ -19866,7 +19968,9 @@ export namespace Prisma {
     id: 'id',
     wishlistId: 'wishlistId',
     productId: 'productId',
-    addedAt: 'addedAt'
+    addedAt: 'addedAt',
+    selectedSize: 'selectedSize',
+    selectedColor: 'selectedColor'
   };
 
   export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
@@ -20415,6 +20519,8 @@ export namespace Prisma {
     stock?: IntFilter<"Product"> | number
     mediaUrls?: StringNullableListFilter<"Product">
     mediaFileIds?: StringNullableListFilter<"Product">
+    sizeOptions?: StringNullableListFilter<"Product">
+    colorOptions?: StringNullableListFilter<"Product">
     isPublished?: BoolFilter<"Product"> | boolean
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
@@ -20436,6 +20542,8 @@ export namespace Prisma {
     stock?: SortOrder
     mediaUrls?: SortOrder
     mediaFileIds?: SortOrder
+    sizeOptions?: SortOrder
+    colorOptions?: SortOrder
     isPublished?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -20460,6 +20568,8 @@ export namespace Prisma {
     stock?: IntFilter<"Product"> | number
     mediaUrls?: StringNullableListFilter<"Product">
     mediaFileIds?: StringNullableListFilter<"Product">
+    sizeOptions?: StringNullableListFilter<"Product">
+    colorOptions?: StringNullableListFilter<"Product">
     isPublished?: BoolFilter<"Product"> | boolean
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
@@ -20481,6 +20591,8 @@ export namespace Prisma {
     stock?: SortOrder
     mediaUrls?: SortOrder
     mediaFileIds?: SortOrder
+    sizeOptions?: SortOrder
+    colorOptions?: SortOrder
     isPublished?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -20505,6 +20617,8 @@ export namespace Prisma {
     stock?: IntWithAggregatesFilter<"Product"> | number
     mediaUrls?: StringNullableListFilter<"Product">
     mediaFileIds?: StringNullableListFilter<"Product">
+    sizeOptions?: StringNullableListFilter<"Product">
+    colorOptions?: StringNullableListFilter<"Product">
     isPublished?: BoolWithAggregatesFilter<"Product"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -20848,6 +20962,8 @@ export namespace Prisma {
     lineTotal?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     productName?: StringFilter<"OrderItem"> | string
     productSku?: StringNullableFilter<"OrderItem"> | string | null
+    selectedSize?: StringNullableFilter<"OrderItem"> | string | null
+    selectedColor?: StringNullableFilter<"OrderItem"> | string | null
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }
@@ -20861,13 +20977,15 @@ export namespace Prisma {
     lineTotal?: SortOrder
     productName?: SortOrder
     productSku?: SortOrderInput | SortOrder
+    selectedSize?: SortOrderInput | SortOrder
+    selectedColor?: SortOrderInput | SortOrder
     order?: OrderOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
   }
 
   export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    orderId_productId?: OrderItemOrderIdProductIdCompoundUniqueInput
+    orderId_productId_selectedSize_selectedColor?: OrderItemOrderIdProductIdSelectedSizeSelectedColorCompoundUniqueInput
     AND?: OrderItemWhereInput | OrderItemWhereInput[]
     OR?: OrderItemWhereInput[]
     NOT?: OrderItemWhereInput | OrderItemWhereInput[]
@@ -20878,9 +20996,11 @@ export namespace Prisma {
     lineTotal?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     productName?: StringFilter<"OrderItem"> | string
     productSku?: StringNullableFilter<"OrderItem"> | string | null
+    selectedSize?: StringNullableFilter<"OrderItem"> | string | null
+    selectedColor?: StringNullableFilter<"OrderItem"> | string | null
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
-  }, "id" | "orderId_productId">
+  }, "id" | "orderId_productId_selectedSize_selectedColor">
 
   export type OrderItemOrderByWithAggregationInput = {
     id?: SortOrder
@@ -20891,6 +21011,8 @@ export namespace Prisma {
     lineTotal?: SortOrder
     productName?: SortOrder
     productSku?: SortOrderInput | SortOrder
+    selectedSize?: SortOrderInput | SortOrder
+    selectedColor?: SortOrderInput | SortOrder
     _count?: OrderItemCountOrderByAggregateInput
     _avg?: OrderItemAvgOrderByAggregateInput
     _max?: OrderItemMaxOrderByAggregateInput
@@ -20910,6 +21032,8 @@ export namespace Prisma {
     lineTotal?: DecimalWithAggregatesFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     productName?: StringWithAggregatesFilter<"OrderItem"> | string
     productSku?: StringNullableWithAggregatesFilter<"OrderItem"> | string | null
+    selectedSize?: StringNullableWithAggregatesFilter<"OrderItem"> | string | null
+    selectedColor?: StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   }
 
   export type CartWhereInput = {
@@ -20974,6 +21098,8 @@ export namespace Prisma {
     productId?: StringFilter<"CartItem"> | string
     quantity?: IntFilter<"CartItem"> | number
     addedAt?: DateTimeFilter<"CartItem"> | Date | string
+    selectedSize?: StringNullableFilter<"CartItem"> | string | null
+    selectedColor?: StringNullableFilter<"CartItem"> | string | null
     cart?: XOR<CartScalarRelationFilter, CartWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }
@@ -20984,13 +21110,15 @@ export namespace Prisma {
     productId?: SortOrder
     quantity?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrderInput | SortOrder
+    selectedColor?: SortOrderInput | SortOrder
     cart?: CartOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
   }
 
   export type CartItemWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    cartId_productId?: CartItemCartIdProductIdCompoundUniqueInput
+    cartId_productId_selectedSize_selectedColor?: CartItemCartIdProductIdSelectedSizeSelectedColorCompoundUniqueInput
     AND?: CartItemWhereInput | CartItemWhereInput[]
     OR?: CartItemWhereInput[]
     NOT?: CartItemWhereInput | CartItemWhereInput[]
@@ -20998,9 +21126,11 @@ export namespace Prisma {
     productId?: StringFilter<"CartItem"> | string
     quantity?: IntFilter<"CartItem"> | number
     addedAt?: DateTimeFilter<"CartItem"> | Date | string
+    selectedSize?: StringNullableFilter<"CartItem"> | string | null
+    selectedColor?: StringNullableFilter<"CartItem"> | string | null
     cart?: XOR<CartScalarRelationFilter, CartWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
-  }, "id" | "cartId_productId">
+  }, "id" | "cartId_productId_selectedSize_selectedColor">
 
   export type CartItemOrderByWithAggregationInput = {
     id?: SortOrder
@@ -21008,6 +21138,8 @@ export namespace Prisma {
     productId?: SortOrder
     quantity?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrderInput | SortOrder
+    selectedColor?: SortOrderInput | SortOrder
     _count?: CartItemCountOrderByAggregateInput
     _avg?: CartItemAvgOrderByAggregateInput
     _max?: CartItemMaxOrderByAggregateInput
@@ -21024,6 +21156,8 @@ export namespace Prisma {
     productId?: StringWithAggregatesFilter<"CartItem"> | string
     quantity?: IntWithAggregatesFilter<"CartItem"> | number
     addedAt?: DateTimeWithAggregatesFilter<"CartItem"> | Date | string
+    selectedSize?: StringNullableWithAggregatesFilter<"CartItem"> | string | null
+    selectedColor?: StringNullableWithAggregatesFilter<"CartItem"> | string | null
   }
 
   export type WishlistWhereInput = {
@@ -21087,6 +21221,8 @@ export namespace Prisma {
     wishlistId?: StringFilter<"WishlistItem"> | string
     productId?: StringFilter<"WishlistItem"> | string
     addedAt?: DateTimeFilter<"WishlistItem"> | Date | string
+    selectedSize?: StringNullableFilter<"WishlistItem"> | string | null
+    selectedColor?: StringNullableFilter<"WishlistItem"> | string | null
     wishlist?: XOR<WishlistScalarRelationFilter, WishlistWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }
@@ -21096,28 +21232,34 @@ export namespace Prisma {
     wishlistId?: SortOrder
     productId?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrderInput | SortOrder
+    selectedColor?: SortOrderInput | SortOrder
     wishlist?: WishlistOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
   }
 
   export type WishlistItemWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    wishlistId_productId?: WishlistItemWishlistIdProductIdCompoundUniqueInput
+    wishlistId_productId_selectedSize_selectedColor?: WishlistItemWishlistIdProductIdSelectedSizeSelectedColorCompoundUniqueInput
     AND?: WishlistItemWhereInput | WishlistItemWhereInput[]
     OR?: WishlistItemWhereInput[]
     NOT?: WishlistItemWhereInput | WishlistItemWhereInput[]
     wishlistId?: StringFilter<"WishlistItem"> | string
     productId?: StringFilter<"WishlistItem"> | string
     addedAt?: DateTimeFilter<"WishlistItem"> | Date | string
+    selectedSize?: StringNullableFilter<"WishlistItem"> | string | null
+    selectedColor?: StringNullableFilter<"WishlistItem"> | string | null
     wishlist?: XOR<WishlistScalarRelationFilter, WishlistWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
-  }, "id" | "wishlistId_productId">
+  }, "id" | "wishlistId_productId_selectedSize_selectedColor">
 
   export type WishlistItemOrderByWithAggregationInput = {
     id?: SortOrder
     wishlistId?: SortOrder
     productId?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrderInput | SortOrder
+    selectedColor?: SortOrderInput | SortOrder
     _count?: WishlistItemCountOrderByAggregateInput
     _max?: WishlistItemMaxOrderByAggregateInput
     _min?: WishlistItemMinOrderByAggregateInput
@@ -21131,6 +21273,8 @@ export namespace Prisma {
     wishlistId?: StringWithAggregatesFilter<"WishlistItem"> | string
     productId?: StringWithAggregatesFilter<"WishlistItem"> | string
     addedAt?: DateTimeWithAggregatesFilter<"WishlistItem"> | Date | string
+    selectedSize?: StringNullableWithAggregatesFilter<"WishlistItem"> | string | null
+    selectedColor?: StringNullableWithAggregatesFilter<"WishlistItem"> | string | null
   }
 
   export type UserAddressWhereInput = {
@@ -21617,6 +21761,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21638,6 +21784,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21659,6 +21807,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21680,6 +21830,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21701,6 +21853,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21717,6 +21871,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21733,6 +21889,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22094,6 +22252,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
     order: OrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutOrderItemsInput
   }
@@ -22107,6 +22267,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type OrderItemUpdateInput = {
@@ -22116,6 +22278,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
   }
@@ -22129,6 +22293,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemCreateManyInput = {
@@ -22140,6 +22306,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type OrderItemUpdateManyMutationInput = {
@@ -22149,6 +22317,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemUncheckedUpdateManyInput = {
@@ -22160,6 +22330,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartCreateInput = {
@@ -22218,6 +22390,8 @@ export namespace Prisma {
     id?: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
     cart: CartCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutCartItemsInput
   }
@@ -22228,12 +22402,16 @@ export namespace Prisma {
     productId: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type CartItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     cart?: CartUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutCartItemsNestedInput
   }
@@ -22244,6 +22422,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemCreateManyInput = {
@@ -22252,12 +22432,16 @@ export namespace Prisma {
     productId: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type CartItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemUncheckedUpdateManyInput = {
@@ -22266,6 +22450,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistCreateInput = {
@@ -22323,6 +22509,8 @@ export namespace Prisma {
   export type WishlistItemCreateInput = {
     id?: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
     wishlist: WishlistCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutWishlistItemsInput
   }
@@ -22332,11 +22520,15 @@ export namespace Prisma {
     wishlistId: string
     productId: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type WishlistItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     wishlist?: WishlistUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutWishlistItemsNestedInput
   }
@@ -22346,6 +22538,8 @@ export namespace Prisma {
     wishlistId?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistItemCreateManyInput = {
@@ -22353,11 +22547,15 @@ export namespace Prisma {
     wishlistId: string
     productId: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type WishlistItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistItemUncheckedUpdateManyInput = {
@@ -22365,6 +22563,8 @@ export namespace Prisma {
     wishlistId?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserAddressCreateInput = {
@@ -22945,6 +23145,8 @@ export namespace Prisma {
     stock?: SortOrder
     mediaUrls?: SortOrder
     mediaFileIds?: SortOrder
+    sizeOptions?: SortOrder
+    colorOptions?: SortOrder
     isPublished?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23326,9 +23528,11 @@ export namespace Prisma {
     isNot?: OrderWhereInput
   }
 
-  export type OrderItemOrderIdProductIdCompoundUniqueInput = {
+  export type OrderItemOrderIdProductIdSelectedSizeSelectedColorCompoundUniqueInput = {
     orderId: string
     productId: string
+    selectedSize: string
+    selectedColor: string
   }
 
   export type OrderItemCountOrderByAggregateInput = {
@@ -23340,6 +23544,8 @@ export namespace Prisma {
     lineTotal?: SortOrder
     productName?: SortOrder
     productSku?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type OrderItemAvgOrderByAggregateInput = {
@@ -23357,6 +23563,8 @@ export namespace Prisma {
     lineTotal?: SortOrder
     productName?: SortOrder
     productSku?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type OrderItemMinOrderByAggregateInput = {
@@ -23368,6 +23576,8 @@ export namespace Prisma {
     lineTotal?: SortOrder
     productName?: SortOrder
     productSku?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type OrderItemSumOrderByAggregateInput = {
@@ -23402,9 +23612,11 @@ export namespace Prisma {
     isNot?: CartWhereInput
   }
 
-  export type CartItemCartIdProductIdCompoundUniqueInput = {
+  export type CartItemCartIdProductIdSelectedSizeSelectedColorCompoundUniqueInput = {
     cartId: string
     productId: string
+    selectedSize: string
+    selectedColor: string
   }
 
   export type CartItemCountOrderByAggregateInput = {
@@ -23413,6 +23625,8 @@ export namespace Prisma {
     productId?: SortOrder
     quantity?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type CartItemAvgOrderByAggregateInput = {
@@ -23425,6 +23639,8 @@ export namespace Prisma {
     productId?: SortOrder
     quantity?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type CartItemMinOrderByAggregateInput = {
@@ -23433,6 +23649,8 @@ export namespace Prisma {
     productId?: SortOrder
     quantity?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type CartItemSumOrderByAggregateInput = {
@@ -23465,9 +23683,11 @@ export namespace Prisma {
     isNot?: WishlistWhereInput
   }
 
-  export type WishlistItemWishlistIdProductIdCompoundUniqueInput = {
+  export type WishlistItemWishlistIdProductIdSelectedSizeSelectedColorCompoundUniqueInput = {
     wishlistId: string
     productId: string
+    selectedSize: string
+    selectedColor: string
   }
 
   export type WishlistItemCountOrderByAggregateInput = {
@@ -23475,6 +23695,8 @@ export namespace Prisma {
     wishlistId?: SortOrder
     productId?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type WishlistItemMaxOrderByAggregateInput = {
@@ -23482,6 +23704,8 @@ export namespace Prisma {
     wishlistId?: SortOrder
     productId?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type WishlistItemMinOrderByAggregateInput = {
@@ -23489,6 +23713,8 @@ export namespace Prisma {
     wishlistId?: SortOrder
     productId?: SortOrder
     addedAt?: SortOrder
+    selectedSize?: SortOrder
+    selectedColor?: SortOrder
   }
 
   export type UserNullableScalarRelationFilter = {
@@ -23894,6 +24120,14 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type ProductCreatesizeOptionsInput = {
+    set: string[]
+  }
+
+  export type ProductCreatecolorOptionsInput = {
+    set: string[]
+  }
+
   export type ProductCollectionCreateNestedManyWithoutProductInput = {
     create?: XOR<ProductCollectionCreateWithoutProductInput, ProductCollectionUncheckedCreateWithoutProductInput> | ProductCollectionCreateWithoutProductInput[] | ProductCollectionUncheckedCreateWithoutProductInput[]
     connectOrCreate?: ProductCollectionCreateOrConnectWithoutProductInput | ProductCollectionCreateOrConnectWithoutProductInput[]
@@ -23994,6 +24228,16 @@ export namespace Prisma {
   }
 
   export type ProductUpdatemediaFileIdsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ProductUpdatesizeOptionsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ProductUpdatecolorOptionsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -25677,6 +25921,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
     order: OrderCreateNestedOneWithoutItemsInput
   }
 
@@ -25688,6 +25934,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type OrderItemCreateOrConnectWithoutProductInput = {
@@ -25704,6 +25952,8 @@ export namespace Prisma {
     id?: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
     cart: CartCreateNestedOneWithoutItemsInput
   }
 
@@ -25712,6 +25962,8 @@ export namespace Prisma {
     cartId: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type CartItemCreateOrConnectWithoutProductInput = {
@@ -25727,6 +25979,8 @@ export namespace Prisma {
   export type WishlistItemCreateWithoutProductInput = {
     id?: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
     wishlist: WishlistCreateNestedOneWithoutItemsInput
   }
 
@@ -25734,6 +25988,8 @@ export namespace Prisma {
     id?: string
     wishlistId: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type WishlistItemCreateOrConnectWithoutProductInput = {
@@ -25815,6 +26071,8 @@ export namespace Prisma {
     lineTotal?: DecimalFilter<"OrderItem"> | Decimal | DecimalJsLike | number | string
     productName?: StringFilter<"OrderItem"> | string
     productSku?: StringNullableFilter<"OrderItem"> | string | null
+    selectedSize?: StringNullableFilter<"OrderItem"> | string | null
+    selectedColor?: StringNullableFilter<"OrderItem"> | string | null
   }
 
   export type CartItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -25842,6 +26100,8 @@ export namespace Prisma {
     productId?: StringFilter<"CartItem"> | string
     quantity?: IntFilter<"CartItem"> | number
     addedAt?: DateTimeFilter<"CartItem"> | Date | string
+    selectedSize?: StringNullableFilter<"CartItem"> | string | null
+    selectedColor?: StringNullableFilter<"CartItem"> | string | null
   }
 
   export type WishlistItemUpsertWithWhereUniqueWithoutProductInput = {
@@ -25868,6 +26128,8 @@ export namespace Prisma {
     wishlistId?: StringFilter<"WishlistItem"> | string
     productId?: StringFilter<"WishlistItem"> | string
     addedAt?: DateTimeFilter<"WishlistItem"> | Date | string
+    selectedSize?: StringNullableFilter<"WishlistItem"> | string | null
+    selectedColor?: StringNullableFilter<"WishlistItem"> | string | null
   }
 
   export type CollectionCreateWithoutChildrenInput = {
@@ -26059,6 +26321,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26079,6 +26343,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26148,6 +26414,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26168,6 +26436,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26272,6 +26542,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26292,6 +26564,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26379,6 +26653,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26399,6 +26675,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26460,6 +26738,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
     product: ProductCreateNestedOneWithoutOrderItemsInput
   }
 
@@ -26471,6 +26751,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type OrderItemCreateOrConnectWithoutOrderInput = {
@@ -26604,6 +26886,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26624,6 +26908,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26709,6 +26995,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26729,6 +27017,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26787,6 +27077,8 @@ export namespace Prisma {
     id?: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
     product: ProductCreateNestedOneWithoutCartItemsInput
   }
 
@@ -26795,6 +27087,8 @@ export namespace Prisma {
     productId: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type CartItemCreateOrConnectWithoutCartInput = {
@@ -26904,6 +27198,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26924,6 +27220,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -26985,6 +27283,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27005,6 +27305,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27062,6 +27364,8 @@ export namespace Prisma {
   export type WishlistItemCreateWithoutWishlistInput = {
     id?: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
     product: ProductCreateNestedOneWithoutWishlistItemsInput
   }
 
@@ -27069,6 +27373,8 @@ export namespace Prisma {
     id?: string
     productId: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type WishlistItemCreateOrConnectWithoutWishlistInput = {
@@ -27178,6 +27484,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27198,6 +27506,8 @@ export namespace Prisma {
     stock?: number
     mediaUrls?: ProductCreatemediaUrlsInput | string[]
     mediaFileIds?: ProductCreatemediaFileIdsInput | string[]
+    sizeOptions?: ProductCreatesizeOptionsInput | string[]
+    colorOptions?: ProductCreatecolorOptionsInput | string[]
     isPublished?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27259,6 +27569,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27279,6 +27591,8 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     mediaUrls?: ProductUpdatemediaUrlsInput | string[]
     mediaFileIds?: ProductUpdatemediaFileIdsInput | string[]
+    sizeOptions?: ProductUpdatesizeOptionsInput | string[]
+    colorOptions?: ProductUpdatecolorOptionsInput | string[]
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -27779,6 +28093,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type CartItemCreateManyProductInput = {
@@ -27786,12 +28102,16 @@ export namespace Prisma {
     cartId: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type WishlistItemCreateManyProductInput = {
     id?: string
     wishlistId: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type ProductCollectionUpdateWithoutProductInput = {
@@ -27846,6 +28166,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
   }
 
@@ -27857,6 +28179,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemUncheckedUpdateManyWithoutProductInput = {
@@ -27867,12 +28191,16 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     cart?: CartUpdateOneRequiredWithoutItemsNestedInput
   }
 
@@ -27881,6 +28209,8 @@ export namespace Prisma {
     cartId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemUncheckedUpdateManyWithoutProductInput = {
@@ -27888,11 +28218,15 @@ export namespace Prisma {
     cartId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistItemUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     wishlist?: WishlistUpdateOneRequiredWithoutItemsNestedInput
   }
 
@@ -27900,12 +28234,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     wishlistId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistItemUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     wishlistId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CollectionCreateManyParentInput = {
@@ -27988,6 +28326,8 @@ export namespace Prisma {
     lineTotal: Decimal | DecimalJsLike | number | string
     productName: string
     productSku?: string | null
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type OrderItemUpdateWithoutOrderInput = {
@@ -27997,6 +28337,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutOrderItemsNestedInput
   }
 
@@ -28008,6 +28350,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
@@ -28018,6 +28362,8 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     productName?: StringFieldUpdateOperationsInput | string
     productSku?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemCreateManyCartInput = {
@@ -28025,12 +28371,16 @@ export namespace Prisma {
     productId: string
     quantity?: number
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type CartItemUpdateWithoutCartInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutCartItemsNestedInput
   }
 
@@ -28039,6 +28389,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemUncheckedUpdateManyWithoutCartInput = {
@@ -28046,17 +28398,23 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistItemCreateManyWishlistInput = {
     id?: string
     productId: string
     addedAt?: Date | string
+    selectedSize?: string | null
+    selectedColor?: string | null
   }
 
   export type WishlistItemUpdateWithoutWishlistInput = {
     id?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutWishlistItemsNestedInput
   }
 
@@ -28064,12 +28422,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistItemUncheckedUpdateManyWithoutWishlistInput = {
     id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    selectedSize?: NullableStringFieldUpdateOperationsInput | string | null
+    selectedColor?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

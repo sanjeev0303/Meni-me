@@ -32,6 +32,8 @@ const productUpdateSchema = z.object({
   mediaFileIds: z.array(z.string()).optional(),
   isPublished: z.boolean().optional(),
   collectionIds: z.array(z.string().min(1)).optional(),
+  sizeOptions: z.array(z.string().min(1)).optional(),
+  colorOptions: z.array(z.string().min(1)).optional(),
 });
 
 const toDecimal = (value: unknown) => {
@@ -79,7 +81,9 @@ export async function GET(_: Request, context: { params: Promise<unknown> }) {
         url,
         fileId: product.mediaFileIds[index] ?? "",
       })),
-  collections: product.collections.map((pivot) => pivot.collection),
+      collections: product.collections.map((pivot) => pivot.collection),
+      sizeOptions: product.sizeOptions ?? [],
+      colorOptions: product.colorOptions ?? [],
     });
   } catch (error) {
     console.error("[ADMIN_PRODUCT_GET]", error);
@@ -116,7 +120,9 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
       updates.mediaUrls = media.map((item) => item.url);
       updates.mediaFileIds = media.map((item) => item.fileId ?? "");
     }
-  if (payload.isPublished !== undefined) updates.isPublished = payload.isPublished;
+    if (payload.isPublished !== undefined) updates.isPublished = payload.isPublished;
+    if (payload.sizeOptions !== undefined) updates.sizeOptions = payload.sizeOptions;
+    if (payload.colorOptions !== undefined) updates.colorOptions = payload.colorOptions;
 
     const result = await prisma.$transaction(async (tx) => {
       const product = await tx.product.update({
@@ -161,6 +167,8 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
         fileId: result.mediaFileIds[index] ?? "",
       })),
       collections: collections.map((pivot) => pivot.collection),
+      sizeOptions: result.sizeOptions ?? [],
+      colorOptions: result.colorOptions ?? [],
     });
   } catch (error) {
     console.error("[ADMIN_PRODUCT_PATCH]", error);

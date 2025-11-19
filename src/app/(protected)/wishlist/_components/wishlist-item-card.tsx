@@ -2,6 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/providers/toast-provider';
+import { commerceCountsQueryKey } from '@/lib/query-keys';
 import { Heart, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -24,46 +26,105 @@ export function WishlistItemCard({
   slug,
 }: WishlistItemCardProps) {
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
 
-  const removeFromWishlistMutation = useMutation({
+  const sendAuthorizedRequest = async (
+    url: string,
+    options: RequestInit,
+    fallbackMessage: string,
+  ) => {
+    const response = await fetch(url, options);
+
+    let data: unknown = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (response.status === 401) {
+      throw new Error('Please sign in to continue.');
+    }
+
+    if (!response.ok) {
+      const message =
+        data && typeof (data as { error?: unknown }).error === 'string'
+          ? ((data as { error: string }).error)
+          : fallbackMessage;
+      throw new Error(message);
+    }
+
+    return data;
+  };
+
+  const removeFromWishlistMutation = useMutation<void, Error>({
     mutationFn: async () => {
-      const response = await fetch('/api/storefront/wishlist/items', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      });
-      if (!response.ok) throw new Error('Failed to remove from wishlist');
-      return response.json();
+      await sendAuthorizedRequest(
+        '/api/storefront/wishlist/items',
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId }),
+        },
+        'Unable to remove from wishlist. Please try again.',
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-wishlist'] });
-      queryClient.invalidateQueries({ queryKey: ['commerce-counts'] });
+      queryClient.invalidateQueries({ queryKey: commerceCountsQueryKey });
+      addToast({
+        title: 'Removed from wishlist',
+        description: `${productName} was removed from your wishlist.`,
+        variant: 'success',
+      });
+    },
+    onError: (error) => {
+      addToast({
+        title: 'Could not remove from wishlist',
+        description: error.message || 'Unable to remove from wishlist. Please try again.',
+        variant: 'error',
+      });
     },
   });
 
-  const moveToCartMutation = useMutation({
+  const moveToCartMutation = useMutation<void, Error>({
     mutationFn: async () => {
-      // Add to cart
-      const cartResponse = await fetch('/api/storefront/cart/items', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity: 1 }),
-      });
-      if (!cartResponse.ok) throw new Error('Failed to add to cart');
+      await sendAuthorizedRequest(
+        '/api/storefront/cart/items',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, quantity: 1 }),
+        },
+        'Unable to move to bag. Please try again.',
+      );
 
-      // Remove from wishlist
-      const wishlistResponse = await fetch('/api/storefront/wishlist/items', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      });
-      if (!wishlistResponse.ok) throw new Error('Failed to remove from wishlist');
-      return wishlistResponse.json();
+      await sendAuthorizedRequest(
+        '/api/storefront/wishlist/items',
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId }),
+        },
+        'Unable to remove from wishlist after moving. Please try again.',
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-wishlist'] });
       queryClient.invalidateQueries({ queryKey: ['user-cart'] });
-      queryClient.invalidateQueries({ queryKey: ['commerce-counts'] });
+      queryClient.invalidateQueries({ queryKey: commerceCountsQueryKey });
+      addToast({
+        title: 'Moved to bag',
+        description: `${productName} was added to your bag.`,
+        variant: 'success',
+      });
+    },
+    onError: (error) => {
+      addToast({
+        title: 'Could not move to bag',
+        description: error.message || 'Unable to move to bag. Please try again.',
+        variant: 'error',
+      });
     },
   });
 

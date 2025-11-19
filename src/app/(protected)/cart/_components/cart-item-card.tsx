@@ -2,6 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/providers/toast-provider';
+import { commerceCountsQueryKey } from '@/lib/query-keys';
 import { Heart, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -27,44 +29,104 @@ export function CartItemCard({
   image,
 }: CartItemCardProps) {
   const queryClient = useQueryClient();
+  const { addToast } = useToast();
 
-  const removeItemMutation = useMutation({
+  const sendAuthorizedRequest = async (
+    url: string,
+    options: RequestInit,
+    fallbackMessage: string,
+  ) => {
+    const response = await fetch(url, options);
+
+    let data: unknown = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (response.status === 401) {
+      throw new Error('Please sign in to continue.');
+    }
+
+    if (!response.ok) {
+      const message =
+        data && typeof (data as { error?: unknown }).error === 'string'
+          ? ((data as { error: string }).error)
+          : fallbackMessage;
+      throw new Error(message);
+    }
+
+    return data;
+  };
+
+  const removeItemMutation = useMutation<void, Error>({
     mutationFn: async () => {
-      const response = await fetch('/api/storefront/cart/items', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      });
-      if (!response.ok) throw new Error('Failed to remove item');
-      return response.json();
+      await sendAuthorizedRequest(
+        '/api/storefront/cart/items',
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId }),
+        },
+        'Unable to remove from bag. Please try again.',
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-cart'] });
-      queryClient.invalidateQueries({ queryKey: ['commerce-counts'] });
+      queryClient.invalidateQueries({ queryKey: commerceCountsQueryKey });
+      addToast({
+        title: 'Removed from bag',
+        description: `${productName} was removed from your bag.`,
+        variant: 'success',
+      });
+    },
+    onError: (error) => {
+      addToast({
+        title: 'Could not remove item',
+        description: error.message || 'Unable to remove from bag. Please try again.',
+        variant: 'error',
+      });
     },
   });
 
-  const moveToWishlistMutation = useMutation({
+  const moveToWishlistMutation = useMutation<void, Error>({
     mutationFn: async () => {
-      const response = await fetch('/api/storefront/wishlist/items', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      });
-      if (!response.ok) throw new Error('Failed to add to wishlist');
+      await sendAuthorizedRequest(
+        '/api/storefront/wishlist/items',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId }),
+        },
+        'Unable to save to wishlist. Please try again.',
+      );
 
-      // Remove from cart after adding to wishlist
-      const removeResponse = await fetch('/api/storefront/cart/items', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      });
-      if (!removeResponse.ok) throw new Error('Failed to remove from cart');
-      return removeResponse.json();
+      await sendAuthorizedRequest(
+        '/api/storefront/cart/items',
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId }),
+        },
+        'Unable to remove from bag after saving. Please try again.',
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-cart'] });
-      queryClient.invalidateQueries({ queryKey: ['commerce-counts'] });
+      queryClient.invalidateQueries({ queryKey: commerceCountsQueryKey });
+      addToast({
+        title: 'Moved to wishlist',
+        description: `${productName} is saved for later.`,
+        variant: 'success',
+      });
+    },
+    onError: (error) => {
+      addToast({
+        title: 'Could not move to wishlist',
+        description: error.message || 'Unable to move to wishlist. Please try again.',
+        variant: 'error',
+      });
     },
   });
 

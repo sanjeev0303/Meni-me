@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import { Prisma, OrderStatus, PaymentStatus } from "@/generated/prisma";
+import { sendInvoiceEmail } from "@/server/invoice-service";
 
 const paramsSchema = z.object({
   orderId: z.string().min(1),
@@ -18,6 +19,15 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
     const params = await context.params;
     const { orderId } = paramsSchema.parse(params);
     const payload = updateSchema.parse(await request.json());
+
+    const existingOrder = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { status: true },
+    });
+
+    if (!existingOrder) {
+      return NextResponse.json({ message: "Order not found" }, { status: 404 });
+    }
 
     const data: Prisma.OrderUpdateInput = {};
 
@@ -47,6 +57,17 @@ export async function PATCH(request: Request, context: { params: Promise<unknown
       where: { id: orderId },
       data,
     });
+
+    // Send invoice email when order is marked as delivered/fulfilled
+    if (payload.status === OrderStatus.DELIVERED) {
+      try {
+        await sendInvoiceEmail(orderId);
+        console.log(`[ADMIN_ORDER_PATCH] Invoice email sent for order ${orderId}`);
+      } catch (emailError) {
+        console.error(`[ADMIN_ORDER_PATCH] Failed to send invoice email for order ${orderId}:`, emailError);
+        // Don't fail the request if email fails - order update was successful
+      }
+    }
 
     return NextResponse.json(order);
   } catch (error) {

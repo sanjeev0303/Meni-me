@@ -28,7 +28,7 @@ const collectionFormSchema = z.object({
   slug: z
     .string()
     .min(1, "Required")
-    .regex(/^[a-z0-9-]+$/, "Lowercase, numbers and hyphen only"),
+    .regex(/^[a-z0-9-_]+$/, "Lowercase, numbers, hyphens and underscores only"),
   description: z.string().optional(),
   parentId: z.string().optional(),
   isPublished: z.boolean(),
@@ -110,9 +110,9 @@ const CollectionsClient = ({ initialCollections }: CollectionsClientProps) => {
   const normalizeSlugInput = (value: string) =>
     value
       .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$|\s+/g, "");
+      .replace(/[^a-z0-9-_]/g, "-")
+      .replace(/[-_]+/g, (match) => match[0])
+      .replace(/^[-_]|[-_]$|\s+/g, "");
 
   const { data: collections = [], isFetching: collectionsLoading } = useQuery({
     queryKey: ["admin", "collections"],

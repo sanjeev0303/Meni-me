@@ -1,0 +1,34 @@
+diff --git a/node_modules/@swc/helpers/cjs/index.cjs b/node_modules/@swc/helpers/cjs/index.cjs
+index a0b5f66..bfe0ea2 100644
+--- a/node_modules/@swc/helpers/cjs/index.cjs
++++ b/node_modules/@swc/helpers/cjs/index.cjs
+@@ -6,6 +6,7 @@
+ 0 && (module.exports = {
+     /* @Annotate_start: the CommonJS named exports for ESM import in node */
+     _apply_decorated_descriptor: null,
++    applyDecoratedDescriptor: null,
+     _apply_decs_2203_r: null,
+     _array_like_to_array: null,
+     _array_with_holes: null,
+@@ -114,6 +115,9 @@ module.exports = {
+     get _apply_decorated_descriptor() {
+         return require("./_apply_decorated_descriptor.cjs")._;
+     },
++    get applyDecoratedDescriptor() {
++        return require("./_apply_decorated_descriptor.cjs")._;
++    },
+     get _apply_decs_2203_r() {
+         return require("./_apply_decs_2203_r.cjs")._;
+     },
+diff --git a/node_modules/@swc/helpers/esm/index.js b/node_modules/@swc/helpers/esm/index.js
+index fe51100..0572aa7 100644
+--- a/node_modules/@swc/helpers/esm/index.js
++++ b/node_modules/@swc/helpers/esm/index.js
+@@ -2,6 +2,7 @@
+ /* To modify this file, please run the `npm run build` command instead. */
+ 
+ export { _ as _apply_decorated_descriptor } from "./_apply_decorated_descriptor.js";
++export { _ as applyDecoratedDescriptor } from "./_apply_decorated_descriptor.js";
+ export { _ as _apply_decs_2203_r } from "./_apply_decs_2203_r.js";
+ export { _ as _array_like_to_array } from "./_array_like_to_array.js";
+ export { _ as _array_with_holes } from "./_array_with_holes.js";

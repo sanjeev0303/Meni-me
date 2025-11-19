@@ -154,6 +154,11 @@ export function OrderCard({ order }: OrderCardProps) {
         </div>
 
         <div className="mt-6 flex gap-3 border-t border-slate-100 pt-6">
+          <Button asChild variant="ghost" className="rounded-full">
+            <Link href={`/orders/${order.id}`} prefetch>
+              View details
+            </Link>
+          </Button>
           {order.items && order.items.length > 0 && order.items[0]?.product?.slug ? (
             <Button asChild variant="outline" className="rounded-full">
               <Link href={`/products/${order.items[0].product.slug}`}>

@@ -176,6 +176,8 @@ const ProductPage = async ({ params }: ProductPageProps) => {
               compareAtPrice={product.compareAtPrice}
               stock={product.stock}
               sku={product.sku}
+              sizeOptions={product.sizeOptions}
+              colorOptions={product.colorOptions}
             />
           </div>
         </div>

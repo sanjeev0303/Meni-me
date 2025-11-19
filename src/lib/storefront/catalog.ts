@@ -30,6 +30,8 @@ type StorefrontProduct = {
   media: StorefrontImage[];
   sku: string | null;
   stock: number;
+  sizeOptions: string[];
+  colorOptions: string[];
   collections: StorefrontCollection[];
   createdAt: Date;
   averageRating: number | null;
@@ -77,6 +79,8 @@ type RawProductBase = {
   mediaFileIds: string[];
   sku: string | null;
   stock: number;
+  sizeOptions: string[];
+  colorOptions: string[];
   createdAt: Date;
   collections: Array<{
     collection: RawCollectionBase;
@@ -130,6 +134,8 @@ const mapProductFromRaw = (product: RawProductBase, rating?: ProductRatingSummar
     })),
     sku: product.sku ?? null,
     stock: product.stock,
+    sizeOptions: product.sizeOptions,
+    colorOptions: product.colorOptions,
     collections: product.collections.map(({ collection }) =>
       mapCollectionFromRaw({
         ...collection,
@@ -265,6 +271,8 @@ export const getCollectionWithProductsBySlug = async (slug: string) => {
               mediaFileIds: true,
               sku: true,
               stock: true,
+              sizeOptions: true,
+              colorOptions: true,
               createdAt: true,
               collections: {
                 where: { collection: { isPublished: true } },
@@ -370,6 +378,8 @@ export const getStorefrontProductBySlug = async (slug: string) => {
         mediaFileIds: true,
         sku: true,
         stock: true,
+        sizeOptions: true,
+        colorOptions: true,
         createdAt: true,
         collections: {
           where: { collection: { isPublished: true } },
@@ -493,6 +503,8 @@ export const getFeaturedProducts = async ({ limit = 8 }: { limit?: number } = {}
       mediaFileIds: true,
       sku: true,
       stock: true,
+      sizeOptions: true,
+      colorOptions: true,
       createdAt: true,
       collections: {
         where: { collection: { isPublished: true } },

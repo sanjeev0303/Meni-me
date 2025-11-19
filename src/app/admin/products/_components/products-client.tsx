@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import ImageKitUpload, { type ImageKitUploadValue } from "@/components/ui/imagekit-upload";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/format";
-import { Plus, RefreshCcw, Trash2 } from "lucide-react";
+import { Plus, RefreshCcw, Trash2, X } from "lucide-react";
 
 const mediaItemSchema = z.object({
   url: z.string().url(),
@@ -37,6 +37,8 @@ const productFormSchema = z.object({
   media: z.array(mediaItemSchema).default([]),
   isPublished: z.boolean().default(true),
   collectionIds: z.array(z.string()).default([]),
+  sizeOptions: z.array(z.string().min(1)).default([]),
+  colorOptions: z.array(z.string().min(1)).default([]),
 });
 
 const fetcher = async <T,>(url: string): Promise<T> => {
@@ -70,6 +72,8 @@ type ProductResponse = {
   mediaFileIds?: string[];
   isPublished: boolean;
   collections: { id: string; name: string; slug: string }[];
+  sizeOptions: string[];
+  colorOptions: string[];
   createdAt: string;
 };
 
@@ -108,6 +112,8 @@ const mapProductToForm = (product: ProductResponse) => {
     media,
     isPublished: product.isPublished,
     collectionIds: product.collections.map((collection) => collection.id),
+    sizeOptions: product.sizeOptions ?? [],
+    colorOptions: product.colorOptions ?? [],
   } satisfies ProductFormValues;
 };
 
@@ -124,6 +130,8 @@ const defaultValues: ProductFormValues = {
   media: [],
   isPublished: true,
   collectionIds: [],
+  sizeOptions: [],
+  colorOptions: [],
 };
 
 type ProductsClientProps = {
@@ -134,6 +142,8 @@ type ProductsClientProps = {
 const ProductsClient = ({ initialProducts, initialCollections }: ProductsClientProps) => {
   const queryClient = useQueryClient();
   const [selectedProduct, setSelectedProduct] = useState<ProductResponse | null>(null);
+  const [sizeDraft, setSizeDraft] = useState("");
+  const [colorDraft, setColorDraft] = useState("");
 
   const { data: products = [], isFetching: productsLoading } = useQuery({
     queryKey: ["admin", "products"],
@@ -208,6 +218,7 @@ const ProductsClient = ({ initialProducts, initialCollections }: ProductsClientP
     },
     onSuccess: (data) => {
       setSelectedProduct(data);
+      form.reset(mapProductToForm(data));
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
     },
   });
@@ -236,6 +247,8 @@ const ProductsClient = ({ initialProducts, initialCollections }: ProductsClientP
   function resetForm() {
     form.reset(defaultValues);
     setSelectedProduct(null);
+    setSizeDraft("");
+    setColorDraft("");
     createMutation.reset();
     updateMutation.reset();
     deleteMutation.reset();
@@ -305,6 +318,8 @@ const ProductsClient = ({ initialProducts, initialCollections }: ProductsClientP
                     )}
                     onClick={() => {
                       setSelectedProduct(product);
+                      setSizeDraft("");
+                      setColorDraft("");
                       form.reset(mapProductToForm(product));
                     }}
                   >
@@ -487,6 +502,130 @@ const ProductsClient = ({ initialProducts, initialCollections }: ProductsClientP
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sizeOptions"
+                render={({ field }) => {
+                  const values = field.value ?? [];
+                  const addSize = () => {
+                    const value = sizeDraft.trim();
+                    if (!value) return;
+                    if (values.some((option) => option.toLowerCase() === value.toLowerCase())) {
+                      setSizeDraft("");
+                      return;
+                    }
+                    field.onChange([...values, value]);
+                    setSizeDraft("");
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Available sizes</FormLabel>
+                      <FormDescription>Provide size options shoppers can pick from (e.g. XS, S, M, L).</FormDescription>
+                      <div className="flex gap-2">
+                        <Input
+                          value={sizeDraft}
+                          placeholder="Add size"
+                          onChange={(event) => setSizeDraft(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              event.preventDefault();
+                              addSize();
+                            }
+                          }}
+                        />
+                        <Button type="button" variant="outline" onClick={addSize}>
+                          Add
+                        </Button>
+                      </div>
+                      {values.length > 0 ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {values.map((option) => (
+                            <span
+                              key={option}
+                              className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
+                            >
+                              {option}
+                              <button
+                                type="button"
+                                className="text-slate-500 transition hover:text-slate-700"
+                                onClick={() => field.onChange(values.filter((item) => item !== option))}
+                                aria-label={`Remove size ${option}`}
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="colorOptions"
+                render={({ field }) => {
+                  const values = field.value ?? [];
+                  const addColor = () => {
+                    const value = colorDraft.trim();
+                    if (!value) return;
+                    if (values.some((option) => option.toLowerCase() === value.toLowerCase())) {
+                      setColorDraft("");
+                      return;
+                    }
+                    field.onChange([...values, value]);
+                    setColorDraft("");
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Available colors</FormLabel>
+                      <FormDescription>List color variants available for this product.</FormDescription>
+                      <div className="flex gap-2">
+                        <Input
+                          value={colorDraft}
+                          placeholder="Add color"
+                          onChange={(event) => setColorDraft(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              event.preventDefault();
+                              addColor();
+                            }
+                          }}
+                        />
+                        <Button type="button" variant="outline" onClick={addColor}>
+                          Add
+                        </Button>
+                      </div>
+                      {values.length > 0 ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {values.map((option) => (
+                            <span
+                              key={option}
+                              className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
+                            >
+                              {option}
+                              <button
+                                type="button"
+                                className="text-slate-500 transition hover:text-slate-700"
+                                onClick={() => field.onChange(values.filter((item) => item !== option))}
+                                aria-label={`Remove color ${option}`}
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField

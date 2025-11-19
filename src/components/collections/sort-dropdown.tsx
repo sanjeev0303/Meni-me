@@ -23,7 +23,7 @@ export function SortDropdown({ sortBy, setSortBy }: SortDropdownProps) {
 
   const currentLabel = sortOptions.find(opt => opt.value === sortBy)?.label || 'Featured';
 
-  const displayLabel = currentLabel.length > 20 ? currentLabel.substring(0, 17) + '...' : currentLabel;
+//   const displayLabel = currentLabel.length > 20 ? currentLabel.substring(0, 17) + '...' : currentLabel;
 
   return (
     <div className="relative">

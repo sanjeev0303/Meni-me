@@ -26,6 +26,57 @@ const getInitials = (name?: string | null, fallback?: string | null) => {
   return "";
 };
 
+const resolveUserAvatarUrl = (user: unknown): string | null => {
+  if (!user || typeof user !== "object") {
+    return null;
+  }
+
+  const record = user as Record<string, unknown>;
+  const candidateKeys = [
+    "image",
+    "imageUrl",
+    "avatarUrl",
+    "profileImage",
+    "photoURL",
+    "picture",
+  ] as const;
+
+  for (const key of candidateKeys) {
+    const value = record[key];
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  const avatar = record.avatar;
+  if (avatar && typeof avatar === "object") {
+    const url = (avatar as Record<string, unknown>).url;
+    if (typeof url === "string") {
+      const trimmed = url.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  const profile = record.profile;
+  if (profile && typeof profile === "object") {
+    const profileRecord = profile as Record<string, unknown>;
+    const value = profileRecord.image ?? profileRecord.picture ?? profileRecord.photoURL;
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  return null;
+};
+
 const MobileSidebar = () => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -84,13 +135,7 @@ const Topbar = () => {
   const userMenuButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const userInitials = useMemo(() => getInitials(user?.name, user?.email), [user?.name, user?.email]);
-  const userAvatar = useMemo(() => {
-    if (!user || typeof user.image !== "string") {
-      return null;
-    }
-    const trimmed = user.image.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }, [user]);
+  const userAvatar = useMemo(() => resolveUserAvatarUrl(user), [user]);
 
   useEffect(() => {
     if (!isUserMenuOpen) {

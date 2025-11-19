@@ -10,6 +10,7 @@ import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import RatingStars from "@/components/ui/rating-stars";
+import { useToast } from "@/components/providers/toast-provider";
 
 const getPrimaryImage = (product: StorefrontProduct) => {
   if (product.media.length > 0) {
@@ -32,6 +33,7 @@ const StorefrontProductCard = ({ product, className }: StorefrontProductCardProp
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
+  const { addToast } = useToast();
 
   const addToCartMutation = useMutation({
     mutationFn: async () => {
@@ -44,6 +46,10 @@ const StorefrontProductCard = ({ product, className }: StorefrontProductCardProp
         }),
       });
 
+      if (response.status === 401) {
+        throw new Error("Please sign in to add items to your bag.");
+      }
+
       if (!response.ok) {
         throw new Error("Failed to add to cart");
       }
@@ -54,9 +60,21 @@ const StorefrontProductCard = ({ product, className }: StorefrontProductCardProp
       queryClient.invalidateQueries({ queryKey: ["user-cart"] });
       queryClient.invalidateQueries({ queryKey: ["commerce-counts"] });
       setIsAdding(false);
+      addToast({
+        title: `${product.name} was added to your bag`,
+        variant: "success",
+      });
     },
-    onError: () => {
+    onError: (error: unknown) => {
       setIsAdding(false);
+      addToast({
+        title: "We couldn’t add this item",
+        description:
+          error instanceof Error && error.message
+            ? error.message
+            : "Please try again shortly.",
+        variant: "error",
+      });
     },
   });
 

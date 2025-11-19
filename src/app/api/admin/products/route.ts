@@ -26,6 +26,8 @@ const baseProductInputSchema = z.object({
   mediaFileIds: z.array(z.string().min(1)).optional(),
   isPublished: z.boolean().default(true),
   collectionIds: z.array(z.string().min(1)).default([]),
+  sizeOptions: z.array(z.string().min(1)).default([]),
+  colorOptions: z.array(z.string().min(1)).default([]),
 });
 
 const toDecimal = (value: unknown) => {
@@ -68,6 +70,8 @@ export async function GET() {
         fileId: product.mediaFileIds[index] ?? "",
       })),
       collections: product.collections.map((pivot) => pivot.collection),
+      sizeOptions: product.sizeOptions ?? [],
+      colorOptions: product.colorOptions ?? [],
     }));
 
     return NextResponse.json(serialised);
@@ -98,9 +102,11 @@ export async function POST(request: Request) {
         price: toDecimal(payload.price)!,
         compareAtPrice: toDecimal(payload.compareAtPrice ?? undefined),
         stock: typeof payload.stock === "string" ? Number(payload.stock) : payload.stock,
-  mediaUrls: media.map((item) => item.url),
-  mediaFileIds: media.map((item) => item.fileId ?? ""),
+        mediaUrls: media.map((item) => item.url),
+        mediaFileIds: media.map((item) => item.fileId ?? ""),
         isPublished: payload.isPublished,
+        sizeOptions: payload.sizeOptions ?? [],
+        colorOptions: payload.colorOptions ?? [],
         collections: {
           create: payload.collectionIds.map((collectionId) => ({
             collection: {
@@ -128,6 +134,8 @@ export async function POST(request: Request) {
           fileId: product.mediaFileIds[index] ?? "",
         })),
         collections: product.collections.map((pivot) => pivot.collection),
+        sizeOptions: product.sizeOptions ?? [],
+        colorOptions: product.colorOptions ?? [],
       },
       { status: 201 },
     );

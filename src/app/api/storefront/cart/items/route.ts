@@ -18,21 +18,42 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
 
-  const productId = typeof (payload as { productId?: unknown }).productId === "string"
-    ? (payload as { productId: string }).productId.trim()
+  const payloadObject =
+    typeof payload === "object" && payload !== null ? (payload as Record<string, unknown>) : {};
+
+  const productId = typeof payloadObject.productId === "string"
+    ? payloadObject.productId.trim()
     : "";
 
   if (!productId) {
     return NextResponse.json({ error: "productId is required" }, { status: 400 });
   }
 
-  const rawQuantity = (payload as { quantity?: unknown }).quantity;
+  const hasSizeSelection = Object.prototype.hasOwnProperty.call(payloadObject, "selectedSize");
+  const hasColorSelection = Object.prototype.hasOwnProperty.call(payloadObject, "selectedColor");
+  const selectedSizeRaw = payloadObject.selectedSize;
+  const selectedColorRaw = payloadObject.selectedColor;
+  const selectedSize = typeof selectedSizeRaw === "string"
+    ? selectedSizeRaw
+    : selectedSizeRaw === null
+      ? null
+      : undefined;
+  const selectedColor = typeof selectedColorRaw === "string"
+    ? selectedColorRaw
+    : selectedColorRaw === null
+      ? null
+      : undefined;
+
+  const rawQuantity = payloadObject.quantity;
   const parsedQuantity = typeof rawQuantity === "number" ? rawQuantity : Number(rawQuantity ?? 1);
 
   const quantity = Number.isFinite(parsedQuantity) ? parsedQuantity : 1;
 
   try {
-    const item = await addItemToCart(user.id, productId, quantity);
+    const item = await addItemToCart(user.id, productId, quantity, {
+      selectedSize: hasSizeSelection ? selectedSize ?? null : undefined,
+      selectedColor: hasColorSelection ? selectedColor ?? null : undefined,
+    });
     const counts = await getUserCommerceCounts(user.id);
 
     return NextResponse.json({ item, counts }, { status: 200 });
@@ -57,16 +78,42 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
 
-  const productId = typeof (payload as { productId?: unknown }).productId === "string"
-    ? (payload as { productId: string }).productId.trim()
+  const payloadObject =
+    typeof payload === "object" && payload !== null ? (payload as Record<string, unknown>) : {};
+
+  const productId = typeof payloadObject.productId === "string"
+    ? (payloadObject.productId as string).trim()
     : "";
 
   if (!productId) {
     return NextResponse.json({ error: "productId is required" }, { status: 400 });
   }
 
+  const hasSizeSelection = Object.prototype.hasOwnProperty.call(payloadObject, "selectedSize");
+  const hasColorSelection = Object.prototype.hasOwnProperty.call(payloadObject, "selectedColor");
+  const selectedSizeRaw = payloadObject.selectedSize;
+  const selectedColorRaw = payloadObject.selectedColor;
+  const selectedSize = typeof selectedSizeRaw === "string"
+    ? selectedSizeRaw
+    : selectedSizeRaw === null
+      ? null
+      : undefined;
+  const selectedColor = typeof selectedColorRaw === "string"
+    ? selectedColorRaw
+    : selectedColorRaw === null
+      ? null
+      : undefined;
+
   try {
-    const result = await clearUserCart(user.id, [productId]);
+    const result = await clearUserCart(user.id, [
+      hasSizeSelection || hasColorSelection
+        ? {
+            productId,
+            ...(hasSizeSelection ? { selectedSize: selectedSize ?? null } : {}),
+            ...(hasColorSelection ? { selectedColor: selectedColor ?? null } : {}),
+          }
+        : productId,
+    ]);
     const counts = await getUserCommerceCounts(user.id);
 
     return NextResponse.json({ result, counts }, { status: 200 });

@@ -6,6 +6,7 @@ import Navbar from "@/components/layout/navbar";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { getUserCommerceCounts } from "@/server/storefront-service";
 import Footer from "@/components/layout/footer";
+import { ToastProvider } from "@/components/providers/toast-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +53,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
+          <ToastProvider>
             <div className="flex min-h-screen flex-col bg-white">
               <Navbar
                 initialCartCount={initialCartCount}
@@ -60,6 +62,7 @@ export default async function RootLayout({
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>

@@ -10,11 +10,19 @@ export type ClearCartResult = {
   removedCount: number;
 };
 
+type CartItemRemovalDescriptor = {
+  productId: string;
+  selectedSize?: string | null;
+  selectedColor?: string | null;
+};
+
 export type CartItemSnapshot = {
   id: string;
   cartId: string;
   productId: string;
   quantity: number;
+  selectedSize: string | null;
+  selectedColor: string | null;
 };
 
 export type WishlistItemSnapshot = {
@@ -22,6 +30,8 @@ export type WishlistItemSnapshot = {
   wishlistId: string;
   productId: string;
   addedAt: Date;
+  selectedSize: string | null;
+  selectedColor: string | null;
 };
 
 export type UserCartData = {
@@ -35,6 +45,8 @@ export type CartItemWithProduct = {
   productId: string;
   quantity: number;
   addedAt: Date;
+  selectedSize: string | null;
+  selectedColor: string | null;
   product: {
     id: string;
     name: string;
@@ -54,6 +66,8 @@ export type WishlistItemWithProduct = {
   id: string;
   productId: string;
   addedAt: Date;
+  selectedSize: string | null;
+  selectedColor: string | null;
   product: {
     id: string;
     name: string;
@@ -68,6 +82,9 @@ const cartItemSelect = {
   cartId: true,
   productId: true,
   quantity: true,
+  selectedSize: true,
+  selectedColor: true,
+  addedAt: true,
 } as const;
 
 const wishlistItemSelect = {
@@ -75,6 +92,8 @@ const wishlistItemSelect = {
   wishlistId: true,
   productId: true,
   addedAt: true,
+  selectedSize: true,
+  selectedColor: true,
 } as const;
 
 export const getUserCommerceCounts = async (
@@ -105,10 +124,29 @@ const normalizeQuantity = (value: number): number => {
   return rounded > 0 ? rounded : 1;
 };
 
+const normalizeSelectionValue = (value?: string | null): string => {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : "";
+};
+
+const denormalizeSelectionValue = (value?: string | null): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : null;
+};
+
 export const addItemToCart = async (
   userId: string,
   productId: string,
   quantity = 1,
+  options: { selectedSize?: string | null; selectedColor?: string | null } = {},
 ): Promise<CartItemSnapshot> => {
   if (!userId.trim()) {
     throw new Error("User id is required to add cart items.");
@@ -119,6 +157,8 @@ export const addItemToCart = async (
   }
 
   const normalizedQuantity = normalizeQuantity(quantity);
+  const normalizedSize = normalizeSelectionValue(options.selectedSize);
+  const normalizedColor = normalizeSelectionValue(options.selectedColor);
 
   const cart = await prisma.cart.upsert({
     where: { userId },
@@ -129,9 +169,11 @@ export const addItemToCart = async (
 
   const item = await prisma.cartItem.upsert({
     where: {
-      cartId_productId: {
+      cartId_productId_selectedSize_selectedColor: {
         cartId: cart.id,
         productId,
+        selectedSize: normalizedSize,
+        selectedColor: normalizedColor,
       },
     },
     update: {
@@ -139,21 +181,30 @@ export const addItemToCart = async (
         increment: normalizedQuantity,
       },
       addedAt: new Date(),
+  selectedSize: normalizedSize,
+  selectedColor: normalizedColor,
     },
     create: {
       cartId: cart.id,
       productId,
       quantity: normalizedQuantity,
+  selectedSize: normalizedSize,
+  selectedColor: normalizedColor,
     },
     select: cartItemSelect,
   });
 
-  return item;
+  return {
+    ...item,
+    selectedSize: denormalizeSelectionValue(item.selectedSize),
+    selectedColor: denormalizeSelectionValue(item.selectedColor),
+  };
 };
 
 export const addItemToWishlist = async (
   userId: string,
   productId: string,
+  options: { selectedSize?: string | null; selectedColor?: string | null } = {},
 ): Promise<WishlistItemSnapshot> => {
   if (!userId.trim()) {
     throw new Error("User id is required to add wishlist items.");
@@ -162,6 +213,9 @@ export const addItemToWishlist = async (
   if (!productId.trim()) {
     throw new Error("Product id is required to add wishlist items.");
   }
+
+  const normalizedSize = normalizeSelectionValue(options.selectedSize);
+  const normalizedColor = normalizeSelectionValue(options.selectedColor);
 
   const wishlist = await prisma.wishlist.upsert({
     where: { userId },
@@ -172,27 +226,38 @@ export const addItemToWishlist = async (
 
   const item = await prisma.wishlistItem.upsert({
     where: {
-      wishlistId_productId: {
+      wishlistId_productId_selectedSize_selectedColor: {
         wishlistId: wishlist.id,
         productId,
+        selectedSize: normalizedSize,
+        selectedColor: normalizedColor,
       },
     },
     update: {
       addedAt: new Date(),
+      selectedSize: normalizedSize,
+      selectedColor: normalizedColor,
     },
     create: {
       wishlistId: wishlist.id,
       productId,
+      selectedSize: normalizedSize,
+      selectedColor: normalizedColor,
     },
     select: wishlistItemSelect,
   });
 
-  return item;
+  return {
+    ...item,
+    selectedSize: denormalizeSelectionValue(item.selectedSize),
+    selectedColor: denormalizeSelectionValue(item.selectedColor),
+  };
 };
 
 export const removeItemFromWishlist = async (
   userId: string,
   productId: string,
+  options: { selectedSize?: string | null; selectedColor?: string | null } = {},
 ): Promise<ClearCartResult> => {
   if (!userId.trim()) {
     return { removedCount: 0 };
@@ -211,10 +276,17 @@ export const removeItemFromWishlist = async (
     return { removedCount: 0 };
   }
 
+  const hasSizeFilter = Object.prototype.hasOwnProperty.call(options, "selectedSize");
+  const hasColorFilter = Object.prototype.hasOwnProperty.call(options, "selectedColor");
+  const normalizedSize = hasSizeFilter ? normalizeSelectionValue(options.selectedSize ?? null) : undefined;
+  const normalizedColor = hasColorFilter ? normalizeSelectionValue(options.selectedColor ?? null) : undefined;
+
   const deleteResult = await prisma.wishlistItem.deleteMany({
     where: {
       wishlistId: wishlist.id,
       productId,
+      ...(hasSizeFilter ? { selectedSize: normalizedSize } : {}),
+      ...(hasColorFilter ? { selectedColor: normalizedColor } : {}),
     },
   });
 
@@ -230,7 +302,7 @@ export const removeItemFromWishlist = async (
 
 export const clearUserCart = async (
   userId: string,
-  productIds?: string[] | null,
+  items?: Array<string | CartItemRemovalDescriptor> | null,
 ): Promise<ClearCartResult> => {
   if (!userId.trim()) {
     return { removedCount: 0 };
@@ -245,12 +317,41 @@ export const clearUserCart = async (
     return { removedCount: 0 };
   }
 
-  const hasProductFilter = Array.isArray(productIds) && productIds.length > 0;
+  const removalItems = Array.isArray(items) ? items.filter((item) => item !== undefined && item !== null) : [];
+  const hasProductFilter = removalItems.length > 0;
 
   const deleteResult = await prisma.cartItem.deleteMany({
     where: {
       cartId: cart.id,
-      ...(hasProductFilter ? { productId: { in: productIds } } : {}),
+      ...(hasProductFilter
+        ? typeof removalItems[0] === "string"
+          ? { productId: { in: removalItems as string[] } }
+          : (() => {
+              const variantConditions = (removalItems as CartItemRemovalDescriptor[])
+                .map((descriptor) => {
+                  if (!descriptor || typeof descriptor.productId !== "string") {
+                    return null;
+                  }
+
+                  const condition: Record<string, unknown> = {
+                    productId: descriptor.productId,
+                  };
+
+                  if (Object.prototype.hasOwnProperty.call(descriptor, "selectedSize")) {
+                    condition.selectedSize = normalizeSelectionValue(descriptor.selectedSize ?? null);
+                  }
+
+                  if (Object.prototype.hasOwnProperty.call(descriptor, "selectedColor")) {
+                    condition.selectedColor = normalizeSelectionValue(descriptor.selectedColor ?? null);
+                  }
+
+                  return condition;
+                })
+                .filter((entry): entry is Record<string, unknown> => entry !== null);
+
+              return variantConditions.length > 0 ? { OR: variantConditions } : {};
+            })()
+        : {}),
     },
   });
 
@@ -280,6 +381,8 @@ export const getUserCart = async (userId: string): Promise<UserCartData | null> 
           productId: true,
           quantity: true,
           addedAt: true,
+          selectedSize: true,
+          selectedColor: true,
           product: {
             select: {
               id: true,
@@ -305,6 +408,8 @@ export const getUserCart = async (userId: string): Promise<UserCartData | null> 
       productId: item.productId,
       quantity: item.quantity,
       addedAt: item.addedAt,
+      selectedSize: denormalizeSelectionValue(item.selectedSize),
+      selectedColor: denormalizeSelectionValue(item.selectedColor),
       product: {
         id: item.product.id,
         name: item.product.name,
@@ -334,6 +439,8 @@ export const getUserWishlist = async (userId: string): Promise<UserWishlistData 
           id: true,
           productId: true,
           addedAt: true,
+          selectedSize: true,
+          selectedColor: true,
           product: {
             select: {
               id: true,
@@ -358,6 +465,8 @@ export const getUserWishlist = async (userId: string): Promise<UserWishlistData 
       id: item.id,
       productId: item.productId,
       addedAt: item.addedAt,
+      selectedSize: denormalizeSelectionValue(item.selectedSize),
+      selectedColor: denormalizeSelectionValue(item.selectedColor),
       product: {
         id: item.product.id,
         name: item.product.name,

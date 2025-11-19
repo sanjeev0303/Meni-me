@@ -58,6 +58,57 @@ const getInitials = (name?: string | null, fallback?: string | null) => {
   return "";
 };
 
+const resolveUserAvatarUrl = (user: unknown): string | null => {
+  if (!user || typeof user !== "object") {
+    return null;
+  }
+
+  const record = user as Record<string, unknown>;
+  const candidateKeys = [
+    "image",
+    "imageUrl",
+    "avatarUrl",
+    "profileImage",
+    "photoURL",
+    "picture",
+  ] as const;
+
+  for (const key of candidateKeys) {
+    const value = record[key];
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  const avatar = record.avatar;
+  if (avatar && typeof avatar === "object") {
+    const url = (avatar as Record<string, unknown>).url;
+    if (typeof url === "string") {
+      const trimmed = url.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  const profile = record.profile;
+  if (profile && typeof profile === "object") {
+    const profileRecord = profile as Record<string, unknown>;
+    const value = profileRecord.image ?? profileRecord.picture ?? profileRecord.photoURL;
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  return null;
+};
+
 export const Navbar = ({
   initialCartCount,
   initialWishlistSize,
@@ -79,6 +130,7 @@ export const Navbar = ({
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isSigningOut, startSignOut] = useTransition();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const userMenuButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -148,14 +200,7 @@ export const Navbar = ({
     [user?.name, user?.email]
   );
 
-  const userAvatar = useMemo(() => {
-    if (!user || typeof user.image !== "string") {
-      return null;
-    }
-
-    const trimmed = user.image.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }, [user]);
+  const userAvatar = useMemo(() => resolveUserAvatarUrl(user), [user]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -273,6 +318,22 @@ export const Navbar = ({
   const toggleSearch = () => {
     setIsSearchOpen((prev) => !prev);
     setIsMenuOpen(false);
+  };
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery) {
+      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit();
+    }
   };
 
   const toggleMobileExpand = (label: string) => {
@@ -535,13 +596,13 @@ export const Navbar = ({
                               </p>
                               <ul className="space-y-1">
                                 {column.links.map((link) => (
-                                  <li key={link}>
+                                  <li key={link.label}>
                                     <Link
-                                      href="#"
+                                      href={link.href}
                                       className="block text-xs text-gray-600 transition-colors duration-150 hover:text-red-600 hover:bg-gray-100 active:bg-gray-200 px-3 py-2.5 sm:py-3 rounded"
                                       onClick={() => setIsMenuOpen(false)}
                                     >
-                                      {link}
+                                      {link.label}
                                     </Link>
                                   </li>
                                 ))}
@@ -685,21 +746,38 @@ export const Navbar = ({
         <div className="fixed inset-0 top-24 z-40 bg-white border-t border-gray-200 overflow-y-auto md:hidden">
           <div className="px-4 py-4">
             {/* Search Input */}
-            <div className="flex items-center gap-2 border-b border-gray-200 pb-4 mb-6">
-              <Search size={20} className="text-gray-500" />
-              <input
-                type="text"
-                placeholder="Tell us what you are looking for"
-                className="flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder-gray-400"
-                autoFocus
-              />
-              <button
-                onClick={() => setIsSearchOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={20} />
-              </button>
-            </div>
+            <form onSubmit={handleSearchSubmit}>
+              <div className="flex items-center gap-2 border-b border-gray-200 pb-4 mb-6">
+                <Search size={20} className="text-gray-500" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  placeholder="Tell us what you are looking for"
+                  className="flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder-gray-400"
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button
+                    type="submit"
+                    className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                  >
+                    Search
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchQuery("");
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </form>
 
             {/* Popular Trending Section */}
             <div className="space-y-6">
@@ -806,12 +884,12 @@ export const Navbar = ({
                             </h3>
                             <ul className="space-y-3">
                               {column.links.map((link) => (
-                                <li key={link}>
+                                <li key={link.label}>
                                   <Link
-                                    href="#"
+                                    href={link.href}
                                     className="text-sm text-gray-700 transition-colors duration-150 hover:text-red-600"
                                   >
-                                    {link}
+                                    {link.label}
                                   </Link>
                                 </li>
                               ))}
@@ -864,14 +942,19 @@ export const Navbar = ({
 
           <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
             {/* Search Input - hidden on medium, visible on large */}
-            <div className="hidden lg:flex items-center gap-2 border-b-2 border-gray-300 px-2 py-1 text-xs text-gray-600 transition-colors duration-200 hover:border-gray-400 focus-within:border-red-600 focus-within:text-gray-900">
-              <Search size={18} className="text-gray-500" />
-              <input
-                type="text"
-                placeholder="Tell us what you are looking for"
-                className="w-56 bg-transparent text-xs text-gray-900 outline-none placeholder-gray-400"
-              />
-            </div>
+            <form onSubmit={handleSearchSubmit} className="hidden lg:flex">
+              <div className="flex items-center gap-2 border-b-2 border-gray-300 px-2 py-1 text-xs text-gray-600 transition-colors duration-200 hover:border-gray-400 focus-within:border-red-600 focus-within:text-gray-900">
+                <Search size={18} className="text-gray-500" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  placeholder="Tell us what you are looking for"
+                  className="w-56 bg-transparent text-xs text-gray-900 outline-none placeholder-gray-400"
+                />
+              </div>
+            </form>
 
             {/* Search Icon - visible on medium only */}
             <button
@@ -946,7 +1029,7 @@ export const Navbar = ({
               {isUserMenuOpen ? (
                 <div
                   ref={userMenuRef}
-                  className="fixed left-0 right-0 top-0 bottom-0 z-40 md:absolute md:top-full md:left-auto md:right-0 md:bottom-auto md:mt-3 md:w-64 md:rounded-3xl md:shadow-xl md:border md:border-gray-200 md:bg-white bg-white border-t border-gray-200 md:hidden flex flex-col overflow-y-auto"
+                  className="fixed left-0 right-0 top-0 bottom-0 z-40 flex flex-col overflow-y-auto bg-white border-t border-gray-200 md:absolute md:top-full md:left-auto md:right-0 md:bottom-auto md:mt-3 md:w-64 md:rounded-3xl md:border md:border-gray-200 md:border-t-0 md:bg-white md:shadow-xl"
                 >
                   <div className="md:hidden flex items-center justify-between sticky top-0 bg-white border-b border-gray-200 px-4 py-4 z-10">
                     <h2 className="text-sm font-bold text-gray-900">Account</h2>
